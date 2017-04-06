@@ -1,0 +1,5 @@
+name = Islandora IIIF
+description = "A IIIF solution for Vanilla islandora"
+package = Islandora
+dependencies[] = islandora
+core = 7.x

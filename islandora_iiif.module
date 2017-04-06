@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Hooks and callbacks for this module.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_iiif_menu() {
+  return array(
+    'islandora/iiif/%islandora_object/%region/%size/%rotation/%quality/%format' => array(
+      'page callback' => 'islandora_iiif_proxied_response',
+      'page arguments' => array(2,3,4,5,6,7),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
+      'load arguments' => array(2),
+    ),
+  );
+}
+
+/**
+ * Our Proxied callback handler()
+ */
+function islandora_iiif_proxied_response(AbstractObject $object, $region, $size, $rotation = 0, $quality, $format) {
+
+  //@TODO implement a hook here to allow per CMODEL backend \
+  // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
+  $iiif_request = array(
+   "pid" => $object->id
+   "region" => $region,
+   "size" => $size, 
+   "rotation" => $rotation,
+   "quality" => $quality,
+   "format" => $format
+  )
+  dpm($iiif_request)
+}
