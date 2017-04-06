@@ -10,7 +10,7 @@
  */
 function islandora_iiif_menu() {
   return array(
-    'islandora_iiif/%islandora_object/%region/%size/%rotation/%quality/%format' => array(
+    'islandora_iiif/%islandora_object/%/%/%/%/%' => array(
       'page callback' => 'islandora_iiif_proxied_response',
       'page arguments' => array(1,2,3,4,5,6),
       'type' => MENU_CALLBACK,
