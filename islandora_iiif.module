@@ -29,12 +29,12 @@ function islandora_iiif_proxied_response(AbstractObject $object, $region, $size,
   //@TODO implement a hook here to allow per CMODEL backend \
   // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
   $iiif_request = array(
-   "pid" => $object->id
+   "pid" => $object->id,
    "region" => $region,
    "size" => $size, 
    "rotation" => $rotation,
    "quality" => $quality,
    "format" => $format
-  )
-  dpm($iiif_request)
+  );
+  dpm($iiif_request);
 }
