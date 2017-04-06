@@ -15,8 +15,8 @@ function islandora_iiif_menu() {
       'page arguments' => array(1,2,3,4,5,6),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
-      'load arguments' => array(2),
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(1),
     ),
   );
 }
