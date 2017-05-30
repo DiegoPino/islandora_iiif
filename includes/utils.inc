@@ -50,7 +50,7 @@ function islandora_iiif_adoredjatoka_info_json($image_info) {
     "tiles"=> array(
       array("width" => 256, "scaleFactors" => range(1,$image_info['dwtLevels']))
     ),
-    "profile" => array("http=>//iiif.io/api/image/2/level2.json"),
+    "profile" => array("http://iiif.io/api/image/2/level2.json"),
   );
   return $info;
 }
