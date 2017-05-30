@@ -37,3 +37,18 @@ function islandora_iiif_safefile($filename, $allowedExtensions = array('jpg')) {
   $basename = file_munge_filename($basename, implode(" ",$allowedExtensions), FALSE);
   return array($basename, $extension);
 }
+
+function islandora_iiif_adoredjatoka_info_json($image_info) {
+  $info = array(
+    "@context" => "http://iiif.io/api/image/2/context.json",
+    "@embed" => "true",
+    "protocol" => "http://iiif.io/api/image",
+    "width" => (int)$image_info["width"],
+    "height" => (int)$image_info["height"],
+    "tiles"=> array(
+      array("width" => 512, "scaleFactors" => array(1,2,4,8,16))
+    ),
+    "profile" => array("http=>//iiif.io/api/image/2/level2.json"),
+  );
+  return $info;
+}
