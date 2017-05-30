@@ -47,7 +47,7 @@ function islandora_iiif_proxied_response(AbstractObject $object, $region, $size,
       'token' => islandora_get_object_token($object->id, OBJ, 2),
     ),
   );
-  echo url("islandora/object/{$object_id}/datastream/$dsid/view", $uri_params);
+  echo url("islandora/object/{$object_id}/datastream/OBJ/view", $uri_params);
   
   dpm($iiif_request);
 }
