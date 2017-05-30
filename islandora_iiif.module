@@ -90,11 +90,10 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
  
    //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
    $settings = islandora_openseadragon_get_settings();
-   $djatoka_url_params = http_build_query($djatoka_metadata_params);
    $djatoka_url = url($settings['djatokaServerBaseURL'], array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
-     'query' => $djatoka_url_params,
+     'query' => $djatoka_metadata_param,
    ));
   
    // Because better readability sucks if tomcat7 is serving
