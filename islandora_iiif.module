@@ -93,7 +93,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
    $djatoka_url = url($settings['djatokaServerBaseURL'], array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
-     'query' => $djatoka_metadata_param,
+     'query' => $djatoka_metadata_params,
    ));
   
    // Because better readability sucks if tomcat7 is serving
