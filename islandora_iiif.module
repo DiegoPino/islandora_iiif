@@ -105,7 +105,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
       drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/Max/0/default.jpg>;rel="canonical"');
       
       $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, true));
-      print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE, JSON_PRETTY_PRINT);
+      print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
    } 
    else {
      drupal_add_http_header('Status', '404 Not Found');
