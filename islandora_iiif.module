@@ -104,7 +104,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
       //@TODO hookify this so others can alter the canonical 
       drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/Max/0/default.jpg>;rel="canonical"');
       
-      $info = islandora_iiif_adoredjatoka_profile_json(json_decode($metadata_response->data, true));
+      $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, true));
       print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE, JSON_PRETTY_PRINT);
    } 
    else {
