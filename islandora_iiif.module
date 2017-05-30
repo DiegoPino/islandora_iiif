@@ -92,6 +92,8 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
    $settings = islandora_openseadragon_get_settings();
    $djatoka_url = url($settings['djatokaServerBaseURL'], array('absolute' => TRUE, 'language' => (object)array('language' => FALSE)));
    $djatoka_url_params = drupal_http_build_query($djatoka_metadata_params);
+   // Because better readability sucks if tomcat7 is serving
+   $djatoka_url_params = str_replace('/', '%2F', $djatoka_url_params);
    dpm($djatoka_url);
    dpm($djatoka_url_params);
    $metadata_response = drupal_http_request($djatoka_url, array('data' => $djatoka_url_params));
