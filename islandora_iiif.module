@@ -10,9 +10,9 @@
  */
 function islandora_iiif_menu() {
   return array(
-    'islandora_iiif/%islandora_object/%/%/%/%/%' => array(
+    'islandora_iiif/%islandora_object/%/%/%/%' => array(
       'page callback' => 'islandora_iiif_proxied_response',
-      'page arguments' => array(1,2,3,4,5,6),
+      'page arguments' => array(1,2,3,4,5),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
@@ -24,17 +24,76 @@ function islandora_iiif_menu() {
 /**
  * Our Proxied callback handler()
  */
-function islandora_iiif_proxied_response(AbstractObject $object, $region, $size, $rotation = 0, $quality, $format) {
-
+function islandora_iiif_proxied_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
+  module_load_include('inc', 'islandora_iiif', 'includes/utils');
+  $qualityandformatparsed = islandora_iiif_safefile($qualityandformat);
   //@TODO implement a hook here to allow per CMODEL backend \
   // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
+
   $iiif_request = array(
    "pid" => $object->id,
    "region" => $region,
    "size" => $size, 
    "rotation" => $rotation,
-   "quality" => $quality,
-   "format" => $format
+   "quality" => $qualityandformatparsed[0],
+   "format" => $qualityandformatparsed[1]
   );
+  
+
+  module_load_include('inc', 'islandora', 'includes/authtokens');
+  $uri_params = array(
+    'absolute' => TRUE,
+    'query' => array( 
+      'token' => islandora_get_object_token($object->id, OBJ, 2),
+    ),
+  );
+  echo url("islandora/object/{$object_id}/datastream/$dsid/view", $uri_params);
+  
   dpm($iiif_request);
 }
+
+function islandora_iiif_file_url_alter(&$uri) {
+  global $user;
+
+  // User 1 will always see the local file in this example.
+  if ($user->uid == 1) {
+    return;
+  }
+  dpm($uri);
+  $cdn1 = 'http://cdn1.example.com';
+  $cdn2 = 'http://cdn2.example.com';
+  $cdn_extensions = array('css', 'js', 'gif', 'jpg', 'jpeg', 'png');
+
+  // Most CDNs don't support private file transfers without a lot of hassle,
+  // so don't support this in the common case.
+  $schemes = array('public');
+
+  $scheme = file_uri_scheme($uri);
+
+  // Only serve shipped files and public created files from the CDN.
+  if (!$scheme || in_array($scheme, $schemes)) {
+    // Shipped files.
+    if (!$scheme) {
+      $path = $uri;
+    }
+    // Public created files.
+    else {
+      $wrapper = file_stream_wrapper_get_instance_by_scheme($scheme);
+      $path = $wrapper->getDirectoryPath() . '/' . file_uri_target($uri);
+    }
+
+    // Clean up Windows paths.
+    $path = str_replace('\\', '/', $path);
+
+    // Serve files with one of the CDN extensions from CDN 1, all others from
+    // CDN 2.
+    $pathinfo = pathinfo($path);
+    if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], $cdn_extensions)) {
+      $uri = $cdn1 . '/' . $path;
+    }
+    else {
+      $uri = $cdn2 . '/' . $path;
+    }
+  }
+}
+
