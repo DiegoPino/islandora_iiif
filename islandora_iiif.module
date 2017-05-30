@@ -11,8 +11,16 @@
 function islandora_iiif_menu() {
   return array(
     'islandora_iiif/%islandora_object/%/%/%/%' => array(
-      'page callback' => 'islandora_iiif_proxied_response',
+      'page callback' => 'islandora_iiif_proxied_image_response',
       'page arguments' => array(1,2,3,4,5),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(1),
+    ),
+    'islandora_iiif/%islandora_object/info.json' => array(
+      'page callback' => 'islandora_iiif_proxied_info_response',
+      'page arguments' => array(1),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
@@ -24,9 +32,10 @@ function islandora_iiif_menu() {
 /**
  * Our Proxied callback handler()
  */
-function islandora_iiif_proxied_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
+function islandora_iiif_proxied_image_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
-  $qualityandformatparsed = islandora_iiif_safefile($qualityandformat);
+  $allowedExtensions = array('png', 'jpg', 'jp2');
+  $qualityandformatparsed = islandora_iiif_safefile($qualityandformat, $allowedExtensions);
   //@TODO implement a hook here to allow per CMODEL backend \
   // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
 
@@ -47,9 +56,45 @@ function islandora_iiif_proxied_response(AbstractObject $object, $region, $size,
       'token' => islandora_get_object_token($object->id, OBJ, 2),
     ),
   );
-  echo url("islandora/object/{$object_id}/datastream/OBJ/view", $uri_params);
+  echo url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params);
   
   dpm($iiif_request);
+}
+
+/**
+ * Our Proxied callback handler()
+ */
+function islandora_iiif_proxied_info_esponse(AbstractObject $object) {
+  module_load_include('inc', 'islandora_iiif', 'includes/utils');
+  global $base_root;
+  $qualityandformatparsed = islandora_iiif_safefile($qualityandformat);
+
+  //@TODO implement a hook here to allow per CMODEL/Context backend.
+  //$hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
+
+  
+  
+
+  module_load_include('inc', 'islandora', 'includes/authtokens');
+  $uri_params = array(
+    'absolute' => TRUE,
+    'query' => array( 
+      'token' => islandora_get_object_token($object->id, OBJ, 2),
+    ),
+  );
+
+  $djatoka_metadata_params = array(
+    'url_ver' => 'Z39.88-2004',
+    'rft_id' =>  url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params),
+    'svc_id' => 'info:lanl-repo/svc/getMetadata'
+  );
+ 
+   //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
+   $settings = islandora_openseadragon_get_settings();
+   $djatoka_url = url($settings['djatokaServerBaseURL'], array('absolute' => TRUE, 'language' => (object)array('language' => FALSE)));
+   $djatoka_url_params = drupal_http_build_query($djatoka_metadata_params);
+   $metadata_response = drupal_http_request($djatoka_url, array('data' => $djatoka_url_params));
+  dpm($metadata_response);
 }
 
 function islandora_iiif_file_url_alter(&$uri) {
