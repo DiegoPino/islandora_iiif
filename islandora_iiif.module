@@ -53,7 +53,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   $uri_params = array(
     'absolute' => TRUE,
     'query' => array( 
-      'token' => islandora_get_object_token($object->id, OBJ, 2),
+      'token' => islandora_get_object_token($object->id, "OBJ", 2),
     ),
   );
   echo url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params);
@@ -64,7 +64,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
 /**
  * Our Proxied callback handler()
  */
-function islandora_iiif_proxied_info_esponse(AbstractObject $object) {
+function islandora_iiif_proxied_info_response(AbstractObject $object) {
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   global $base_root;
   $qualityandformatparsed = islandora_iiif_safefile($qualityandformat);
