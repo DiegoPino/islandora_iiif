@@ -67,7 +67,6 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
 function islandora_iiif_proxied_info_response(AbstractObject $object) {
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   global $base_root;
-  $qualityandformatparsed = islandora_iiif_safefile($qualityandformat);
 
   //@TODO implement a hook here to allow per CMODEL/Context backend.
   //$hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
