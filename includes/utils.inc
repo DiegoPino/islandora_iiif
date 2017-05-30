@@ -39,6 +39,8 @@ function islandora_iiif_safefile($filename, $allowedExtensions = array('jpg')) {
 }
 
 function islandora_iiif_adoredjatoka_info_json($image_info) {
+
+  // Note: Adore-djatoka tiles work on 96px multipliers
   $info = array(
     "@context" => "http://iiif.io/api/image/2/context.json",
     "@embed" => "true",
@@ -46,7 +48,7 @@ function islandora_iiif_adoredjatoka_info_json($image_info) {
     "width" => (int)$image_info["width"],
     "height" => (int)$image_info["height"],
     "tiles"=> array(
-      array("width" => 512, "scaleFactors" => array(1,2,4,8,16))
+      array("width" => 256, "scaleFactors" => range(1,$image_info['dwtLevels']))
     ),
     "profile" => array("http=>//iiif.io/api/image/2/level2.json"),
   );
