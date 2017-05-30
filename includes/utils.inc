@@ -3,8 +3,10 @@
  * Cleans a fake filename for IIIF´s Server API.
  * @param string $filename
  *  A File name as IIIF Server API would expect
+ * @param array $allowedExtensionse
+ *  An array with allowed extensions
  *
- * @return array()
+ * @return array
  *  Containing basename and its extension 
  *
  * @author Diego Pino Navarro
@@ -12,7 +14,6 @@
 
 function islandora_iiif_safefile($filename, $allowedExtensions = array('jpg')) {
   // @TODO: this should be defined per backend image implementation.
-    
   list($filename) = explode('?', $filename);
   list($filename) = explode('#', $filename);
   var_dump($filename);
@@ -22,7 +23,6 @@ function islandora_iiif_safefile($filename, $allowedExtensions = array('jpg')) {
 
   if (strpos($filename, '.') === FALSE) {
     $extension = FALSE;
-    var_dump($filename);
   }
   else {
     $dotpos = strrpos($filename, '.');
