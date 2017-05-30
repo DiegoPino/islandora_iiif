@@ -12,7 +12,7 @@
 
 function islandora_iiif_safefile($filename) {
   // @TODO: this should be defined per backend image implementation.
-  $allowedExtensions = array(png, jpg, jp2);
+  $allowedExtensions = array('png', 'jpg', 'jp2');
     
   list($filename) = explode('?', $filename);
   list($filename) = explode('#', $filename);
