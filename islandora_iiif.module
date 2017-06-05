@@ -56,8 +56,13 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
       'token' => islandora_get_object_token($object->id, "OBJ", 2),
     ),
   );
-  echo url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params);
-  
+  $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
+  $theresponsecode = (int)$metadata_response->code;
+  if ($theresponsecode >= 200 && $theresponsecode < 400) {
+    echo url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params);
+    print_r(islandora_iiif_djatoka_region(json_decode($metadata_response->data, $iiif_request)));
+    dpm(islandora_iiif_djatoka_region(json_decode($metadata_response->data, $iiif_request)));
+    }
   dpm($iiif_request);
 }
 
@@ -70,33 +75,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
 
   //@TODO implement a hook here to allow per CMODEL/Context backend.
   //$hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
-
-  
-  
-
-  module_load_include('inc', 'islandora', 'includes/authtokens');
-  $uri_params = array(
-    'absolute' => TRUE,
-    'query' => array( 
-      'token' => islandora_get_object_token($object->id, "OBJ", 2),
-    ),
-  );
-
-  $djatoka_metadata_params = array(
-    'url_ver' => 'Z39.88-2004',
-    'rft_id' =>  url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params),
-    'svc_id' => 'info:lanl-repo/svc/getMetadata'
-  );
- 
-   //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
-   $settings = islandora_openseadragon_get_settings();
-   $djatoka_url = url($settings['djatokaServerBaseURL'], array(
-     'absolute' => TRUE,
-     'language' => (object)array('language' => FALSE),
-     'query' => $djatoka_metadata_params,
-   ));
- 
-   $metadata_response = drupal_http_request($djatoka_url);
+   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
   
    $theresponsecode = (int)$metadata_response->code;
    if ($theresponsecode >= 200 && $theresponsecode < 400) {
@@ -110,7 +89,9 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
    else {
      drupal_add_http_header('Status', '404 Not Found');
    }
+   
    dpm($metadata_response);
+   
 }
 
 
