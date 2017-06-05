@@ -67,7 +67,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   );
 
   $match = array();
-  $h = (int)$image_info["heigth"];
+  $h = (int)$image_info["height"];
   $w = (int)$image_info["width"];
   //Set this by default in case nothing matches
   $region_dimensions = array($w, $h);
@@ -157,7 +157,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     break; 
   }
   // Offset offsets things...jiji
-  if (count($offset) > 0) {
+  if (count($offsets) > 0) {
     $exp_reduction = pow($image_info['dwtLevels'] - $djatoka_params_translated['level'], 2);
     $powpow = function($v) use ($exp_reduction) {
       return ($v/(int)$exp_reduction);
