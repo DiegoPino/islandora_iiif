@@ -172,7 +172,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   // This basically converts any degree in chunks of 90 between 0 and 360. 
   // Can't remember last time i had to do this.
   $djatoka_params_translated['rotation'] = ((int)$iiif_params['rotation'] - $rotmod) % 360;
-  
+  dpm($djatoka_params_translated);
   return $djatoka_params_translated;
 }
 
