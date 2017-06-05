@@ -59,7 +59,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
   //dpm($metadata_response);
   $theresponsecode = (int)$metadata_response->code;
-  
+  dpm($theresponsecode);
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
     dpm(islandora_iiif_djatoka_region(json_decode($metadata_response->data), $iiif_request));
     echo url("islandora/object/{$object->id}/datastream/OBJ/view", $uri_params);
