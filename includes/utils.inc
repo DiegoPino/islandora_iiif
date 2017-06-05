@@ -177,8 +177,6 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
 }
 
 function islandora_iiif_djatoka_metadata_request($pid) {
-  
-
   module_load_include('inc', 'islandora', 'includes/authtokens');
   $uri_params = array(
     'absolute' => TRUE,
@@ -200,6 +198,7 @@ function islandora_iiif_djatoka_metadata_request($pid) {
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
    ));
+   dpm($djatoka_url);
    return drupal_http_request($djatoka_url);
 }
 
