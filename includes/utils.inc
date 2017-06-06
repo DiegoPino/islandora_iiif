@@ -70,7 +70,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     'region' => "0,0," . implode(",", array_reverse($region_dimensions)),
     'rotate' => 0,
     'level' => $image_info['levels'],
-    'scale' => $w .",".$h,
+    'scale' => NULL,
   );
   //preventive in case region does not fit anything else:
   // I will precalculate some of the non string options here
@@ -138,17 +138,18 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     //Would love to use ** but was introduced in php 5.6
     $djatoka_params_translated['scale'] = ($server_ratio * pow(2, $reduction));
     $djatoka_params_translated['level'] = $level;
-
     break;
     case 1 === preg_match('/^(\d+),(\d+)$/', $iiif_params['size'], $match):
-    $djatoka_params_translated['scale'] = $match[0];
-    $level = (int)($region_dimensions[0] || $w) / (int)$match[1];    
+    $djatoka_params_translated['scale'] = (int)$match[0];    
+    $server_ratio = (int)($region_dimensions[0] || $w) / (int)$match[1];
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^!(\d+),(\d+)$/', $iiif_params['size'], $match):
     $best_scale = min($match[1]/$region_dimensions[0], $match[2]/$region_dimensions[1]);
     $dw = round(ceil($region_dimensions[0] * $best_scale),0);
-    $dh = round(ceil($region_dimensions[1] * $best_scale),0);    
+    $dh = round(ceil($region_dimensions[1] * $best_scale),0);
     $djatoka_params_translated['scale'] = $dw . "," . $dh;
     $server_ratio = ($region_dimensions[0] / $dw);
     $level = $image_info['levels'] - round(log($server_ratio, 2),0);
