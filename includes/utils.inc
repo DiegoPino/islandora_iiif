@@ -60,18 +60,18 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   // We need to translate basically everything to zoom level + region + rotate.
   $offsets = array();
   $region_dimensions = array();
-  $djatoka_params_translated = array(
-    'region' => NULL,
-    'rotate' => 0,
-    'level' => 0,
-  );
+  
 
   $match = array();
   $h = (int)$image_info["height"];
   $w = (int)$image_info["width"];
   //Set this by default in case nothing matches
   $region_dimensions = array($w, $h);
-  
+  $djatoka_params_translated = array(
+    'region' => implode(",", $region_dimensions),
+    'rotate' => 0,
+    'level' => 0,
+  );
   //preventive in case region does not fit anything else:
   // I will precalculate some of the non string options here
 
