@@ -68,9 +68,9 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   //Set this by default in case nothing matches
   $region_dimensions = array($w, $h);
   $djatoka_params_translated = array(
-    'region' => "0,0," . implode(",", $region_dimensions),
+    'region' => "0,0," . implode(",", array_reverse($region_dimensions)),
     'rotate' => 0,
-    'level' => 0,
+    'level' => $image_info['levels'],
   );
   //preventive in case region does not fit anything else:
   // I will precalculate some of the non string options here
@@ -105,7 +105,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
         $offsets = array($offset, 0);
         $region_dimensions = array($min, $min);
         if ($h >= $w) {
-          $offsets = reverse($offsets);
+          $offsets = array_reverse($offsets);
         }    
         break;
     default:
