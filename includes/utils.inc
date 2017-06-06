@@ -122,12 +122,16 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     break;
     case 1 === preg_match('/^(\d+),$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = (int)$match[1].",0";
-    $level = (int)($region_dimensions[0] || $w) / (int)$match[1];
+    $server_ratio = (int)($region_dimensions[0]) / (int) $match[1];
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^,(\d+)$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = "0,".(int)$match[1];
-    $level = (int)($region_dimensions[1] || $h) / (int)$match[1];
+    $server_ratio = (int)($region_dimensions[1]) / (int)$match[1];
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^pct:(\d*\.?\d*)$/i', $iiif_params['size'], $match):
@@ -139,18 +143,10 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $djatoka_params_translated['scale'] = ($server_ratio * pow(2, $reduction));
     $djatoka_params_translated['level'] = $level;
     break;
-    case 1 === preg_match('/^([\d]+),([\d]*)$/', $iiif_params['size'], $match):
+    case 1 === preg_match('/^([\d]+),([\d]+)$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = (int)$match[0]; 
     dpm($match);
     $server_ratio = (int)($region_dimensions[0]) / (int) $match[1];
-    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
-    $level =  $level < 1 ? 1 : $level;
-    $djatoka_params_translated['level'] = $level;
-    break;
-    case 1 === preg_match('/^([\d]*),([\d]+)$/', $iiif_params['size'], $match):
-    $djatoka_params_translated['scale'] = (int)$match[0]; 
-    dpm($match);
-    $server_ratio = (int)($region_dimensions[1]) / (int) $match[2];
     $level = $image_info['levels'] - round(log($server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
