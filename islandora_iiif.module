@@ -33,6 +33,7 @@ function islandora_iiif_menu() {
  * Our Proxied callback handler()
  */
 function islandora_iiif_proxied_image_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
+  global $base_root;
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   $allowedExtensions = array('png', 'jpg', 'jp2');
   $qualityandformatparsed = islandora_iiif_safefile($qualityandformat, $allowedExtensions);
@@ -57,10 +58,10 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     ),
   );
   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
-   dpm($iiif_request);
+   //dpm($iiif_request);
   //dpm($metadata_response);
   $theresponsecode = (int)$metadata_response->code;
-  dpm($theresponsecode);
+  //dpm($theresponsecode);
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
     $thatthing = islandora_iiif_djatoka_region(json_decode($metadata_response->data, true), $iiif_request);
       drupal_add_http_header('Content-Type', 'image/jp2');
