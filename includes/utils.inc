@@ -222,6 +222,7 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
     'svc.level' => $djatoka_params_translated['level'],
     'svc.rotate' => $djatoka_params_translated['rotation'],
     'svc.region' => $djatoka_params_translated['region'],
+    'svc.scale' =>  $djatoka_params_translated['scale'],
   );
  
    //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
