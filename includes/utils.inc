@@ -135,12 +135,16 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^pct:(\d*\.?\d*)$/i', $iiif_params['size'], $match):
+    // Not sure if we should allow over zoom
+    // without the log() we can really go over 1.0 on scale as much as we want
+    // But since IIIF is all about exposing, should we allow that much traffic?
     $server_ratio = $match[1]/100;
     $level = $image_info['levels'] - round(log(1/$server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
     $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
     $djatoka_params_translated['scale'] = (float)($server_ratio * pow(2, $reduction));
+    $djatoka_params_translated['scale'] = $djatoka_params_translated['scale'] < 1 ? $djatoka_params_translated['scale'] : 1.0;
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^([\d]+),([\d]+)$/', $iiif_params['size'], $match):
