@@ -137,7 +137,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $level =  $level < 1 ? 1 : $level;
     $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
-    $djatoka_params_translated['scale'] = ($server_ratio * pow($reduction, 2));
+    $djatoka_params_translated['scale'] = ($server_ratio * pow(2, $reduction));
     $djatoka_params_translated['level'] = $level;
 
     break;
@@ -206,3 +206,34 @@ function islandora_iiif_djatoka_metadata_request($pid) {
    return drupal_http_request($djatoka_url);
 }
 
+function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) {
+  module_load_include('inc', 'islandora', 'includes/authtokens');
+  $uri_params = array(
+    'absolute' => TRUE,
+    'query' => array( 
+      'token' => islandora_get_object_token($pid, "OBJ", 2),
+    ),
+  );
+  // Output format should be requested by the caller.
+  // @TODO add to $djatoka_params_translated
+  $djatoka_metadata_params = array(
+    'url_ver' => 'Z39.88-2004',
+    'rft_id' =>  url("islandora/object/{$pid}/datastream/OBJ/view", $uri_params),
+    'svc_id' => 'info:lanl-repo/svc/getRegion',
+    'svc_val_fmt' => 'info:ofi/fmt:kev:mtx:jpeg2000',
+    'svc.format' => 'image/jp2',
+    'svc.level' => $djatoka_params_translated['level'],
+    'svc.rotate' => $djatoka_params_translated['rotation'],
+    'svc.region' => $djatoka_params_translated['region'],
+  );
+ 
+   //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
+   $settings = islandora_openseadragon_get_settings();
+   $djatoka_url = url($settings['djatokaServerBaseURL'], array(
+     'absolute' => TRUE,
+     'language' => (object)array('language' => FALSE),
+     'query' => $djatoka_metadata_params,
+   ));
+   dpm($djatoka_url);
+   return drupal_http_request($djatoka_url);
+}
