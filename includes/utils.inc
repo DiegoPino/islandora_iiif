@@ -47,7 +47,7 @@ function islandora_iiif_adoredjatoka_info_json($image_info) {
     "width" => (int)$image_info["width"],
     "height" => (int)$image_info["height"],
     "tiles"=> array(
-      array("width" => 256, "scaleFactors" => range(1,$image_info['dwtLevels']))
+      array("width" => 256, "scaleFactors" => range(1,$image_info['levels']))
     ),
     "profile" => array("http://iiif.io/api/image/2/level2.json"),
   );
@@ -136,7 +136,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     break;
     case 1 === preg_match('/^pct:(\d*\.?\d*)$/i', $iiif_params['size'], $match):
     $server_ratio = round($match[1]/100, 1);
-    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level = $image_info['levels'] - round(log(1/$server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
     $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
@@ -144,8 +144,8 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^([\d]+),([\d]+)$/', $iiif_params['size'], $match):
+    // This is really fake. Adore-djatoka can't deliver distorted images at all.
     $djatoka_params_translated['scale'] = (int)$match[0]; 
-    dpm($match);
     $server_ratio = (int)($region_dimensions[0]) / (int) $match[1];
     $level = $image_info['levels'] - round(log($server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
