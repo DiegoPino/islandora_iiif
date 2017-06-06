@@ -68,7 +68,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   //Set this by default in case nothing matches
   $region_dimensions = array($w, $h);
   $djatoka_params_translated = array(
-    'region' => implode(",", $region_dimensions),
+    'region' => "0,0," . implode(",", $region_dimensions),
     'rotate' => 0,
     'level' => 0,
   );
@@ -132,9 +132,9 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     break;
     case 1 === preg_match('/^pct:(\d*\.?\d*)$/i', $iiif_params['size'], $match):
     $server_ratio = round($match[1]/100, 1);
-    $level = $image_info['dwtLevels'] - round(log($server_ratio, 2),0);
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
-    $reduction = $image_info['dwtLevels'] - $level;
+    $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
     $djatoka_params_translated['scale'] = ($server_ratio * pow($reduction, 2));
     $djatoka_params_translated['level'] = $level;
@@ -151,14 +151,14 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $dh = round(ceil($region_dimensions[1] * $best_scale),0);    
     $djatoka_params_translated['scale'] = $dw . "," . $dh;
     $server_ratio = ($region_dimensions[0] / $dw);
-    $level = $image_info['dwtLevels'] - round(log($server_ratio, 2),0);
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break; 
   }
   // Offset offsets things...jiji
   if (count($offsets) > 0) {
-    $exp_reduction = pow($image_info['dwtLevels'] - $djatoka_params_translated['level'], 2);
+    $exp_reduction = pow($image_info['levels'] - $djatoka_params_translated['level'], 2);
     $powpow = function($v) use ($exp_reduction) {
       return ($v/(int)$exp_reduction);
     };
