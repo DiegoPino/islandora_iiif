@@ -231,5 +231,6 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
    ));
+   dpm($djatoka_url);
    return drupal_http_request($djatoka_url);
 }
