@@ -16,7 +16,6 @@ function islandora_iiif_safefile($filename, $allowedExtensions = array('jpg')) {
   // @TODO: this should be defined per backend image implementation.
   list($filename) = explode('?', $filename);
   list($filename) = explode('#', $filename);
-  var_dump($filename);
   $filename = rawurldecode(drupal_basename($filename));
   // Remove white space variations.
   $filename = trim($filename, " \t\n\r\0\x0B.");
@@ -176,7 +175,6 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   // This basically converts any degree in chunks of 90 between 0 and 360. 
   // Can't remember last time i had to do this.
   $djatoka_params_translated['rotation'] = ((int)$iiif_params['rotation'] - $rotmod) % 360;
-  dpm($djatoka_params_translated);
   return $djatoka_params_translated;
 }
 
@@ -202,7 +200,6 @@ function islandora_iiif_djatoka_metadata_request($pid) {
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
    ));
-   dpm($djatoka_url);
    return drupal_http_request($djatoka_url);
 }
 
@@ -234,6 +231,5 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
    ));
-   dpm($djatoka_url);
    return drupal_http_request($djatoka_url);
 }
