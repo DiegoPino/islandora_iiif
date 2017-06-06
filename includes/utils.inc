@@ -139,10 +139,18 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $djatoka_params_translated['scale'] = ($server_ratio * pow(2, $reduction));
     $djatoka_params_translated['level'] = $level;
     break;
-    case 1 === preg_match('/^([\d]*),([\d]*)$/', $iiif_params['size'], $match):
+    case 1 === preg_match('/^([\d]+),([\d]*)$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = (int)$match[0]; 
     dpm($match);
     $server_ratio = (int)($region_dimensions[0]) / (int) $match[1];
+    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level =  $level < 1 ? 1 : $level;
+    $djatoka_params_translated['level'] = $level;
+    break;
+    case 1 === preg_match('/^([\d]*),([\d]+)$/', $iiif_params['size'], $match):
+    $djatoka_params_translated['scale'] = (int)$match[0]; 
+    dpm($match);
+    $server_ratio = (int)($region_dimensions[1]) / (int) $match[2];
     $level = $image_info['levels'] - round(log($server_ratio, 2),0);
     $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
