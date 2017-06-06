@@ -144,7 +144,8 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
     $djatoka_params_translated['scale'] = (float)($server_ratio * pow(2, $reduction));
-    $djatoka_params_translated['scale'] = $djatoka_params_translated['scale'] < 1 ? $djatoka_params_translated['scale'] : 1.0;
+    $djatoka_params_translated['scale'] = $djatoka_params_translated['scale'] < 1 ? $djatoka_params_translated['scale'] : (float)"1.0";
+    dpm($djatoka_params_translated['scale']);
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^([\d]+),([\d]+)$/', $iiif_params['size'], $match):
