@@ -71,6 +71,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     'region' => "0,0," . implode(",", array_reverse($region_dimensions)),
     'rotate' => 0,
     'level' => $image_info['levels'],
+    'scale' => $w,
   );
   //preventive in case region does not fit anything else:
   // I will precalculate some of the non string options here
