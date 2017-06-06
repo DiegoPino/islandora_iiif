@@ -170,7 +170,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     dpm("reduction". $exp_reduction);
     $powpow = function($v) use ($exp_reduction) {
       if ($exp_reduction > 0) {
-        return (int)($v/(int)$exp_reduction);
+        return round($v/$exp_reduction,0);
       }
       return $v;
     };
