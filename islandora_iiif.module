@@ -68,7 +68,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     //@TODO hookify this so others can alter the canonical 
     drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jpg>;rel="canonical"');
     $theimage = islandora_iiif_djatoka_image_request($object->id, $thatthing);
-    echo $theimage->data;
+    print $theimage->data;
   }
   else {
     drupal_add_http_header('Status', '404 Not Found');
@@ -112,7 +112,7 @@ function islandora_iiif_file_url_alter(&$uri) {
   if ($user->uid == 1) {
     return;
   }
-  dpm($uri);
+ 
   $cdn1 = 'http://cdn1.example.com';
   $cdn2 = 'http://cdn2.example.com';
   $cdn_extensions = array('css', 'js', 'gif', 'jpg', 'jpeg', 'png');
