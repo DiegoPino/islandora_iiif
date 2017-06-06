@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @file
- * Hooks and callbacks for this module.
- */
+* @file
+* Hooks and callbacks for this module.
+*/
 
 /**
- * Implements hook_menu().
- */
+* Implements hook_menu().
+*/
 function islandora_iiif_menu() {
   return array(
     'islandora_iiif/%islandora_object/%/%/%/%' => array(
@@ -30,8 +30,8 @@ function islandora_iiif_menu() {
 }
 
 /**
- * Our Proxied callback handler()
- */
+* Our Proxied callback handler()
+*/
 function islandora_iiif_proxied_image_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
   global $base_root;
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
@@ -41,12 +41,12 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
 
   $iiif_request = array(
-   "pid" => $object->id,
-   "region" => $region,
-   "size" => $size, 
-   "rotation" => $rotation,
-   "quality" => $qualityandformatparsed[0],
-   "format" => $qualityandformatparsed[1]
+    "pid" => $object->id,
+    "region" => $region,
+    "size" => $size, 
+    "rotation" => $rotation,
+    "quality" => $qualityandformatparsed[0],
+    "format" => $qualityandformatparsed[1]
   );
   
 
@@ -58,49 +58,48 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     ),
   );
   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
-   //dpm($iiif_request);
+  //dpm($iiif_request);
   //dpm($metadata_response);
   $theresponsecode = (int)$metadata_response->code;
   //dpm($theresponsecode);
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
     $thatthing = islandora_iiif_djatoka_region(json_decode($metadata_response->data, true), $iiif_request);
-      drupal_add_http_header('Content-Type', 'image/jp2');
-      //@TODO hookify this so others can alter the canonical 
-      drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jpg>;rel="canonical"');
-      $theimage = islandora_iiif_djatoka_image_request($object->id, $thatthing);
-      echo $theimage->data;
-    }
-    else {
-      drupal_add_http_header('Status', '404 Not Found');
-    }
+    drupal_add_http_header('Content-Type', 'image/jp2');
+    //@TODO hookify this so others can alter the canonical 
+    drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jpg>;rel="canonical"');
+    $theimage = islandora_iiif_djatoka_image_request($object->id, $thatthing);
+    echo $theimage->data;
+  }
+  else {
+    drupal_add_http_header('Status', '404 Not Found');
+  }
+  exit();
 }
 
 /**
- * Our Proxied callback handler()
- */
+* Our Proxied callback handler()
+*/
 function islandora_iiif_proxied_info_response(AbstractObject $object) {
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   global $base_root;
 
   //@TODO implement a hook here to allow per CMODEL/Context backend.
   //$hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
-   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
+  $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
   
-   $theresponsecode = (int)$metadata_response->code;
-   if ($theresponsecode >= 200 && $theresponsecode < 400) {
-      drupal_add_http_header('Content-Type', 'application/json');
-      //@TODO hookify this so others can alter the canonical 
-      drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jpg>;rel="canonical"');
+  $theresponsecode = (int)$metadata_response->code;
+  if ($theresponsecode >= 200 && $theresponsecode < 400) {
+    drupal_add_http_header('Content-Type', 'application/json');
+    //@TODO hookify this so others can alter the canonical 
+    drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jpg>;rel="canonical"');
       
-      $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, true));
-      print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-   } 
-   else {
-     drupal_add_http_header('Status', '404 Not Found');
-   }
-   
-   dpm($metadata_response);
-   
+    $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, true));
+    print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+  } 
+  else {
+    drupal_add_http_header('Status', '404 Not Found');
+  }
+  exit();
 }
 
 
@@ -150,4 +149,3 @@ function islandora_iiif_file_url_alter(&$uri) {
     }
   }
 }
-
