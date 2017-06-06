@@ -158,9 +158,12 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   }
   // Offset offsets things...jiji
   if (count($offsets) > 0) {
-    $exp_reduction = pow($image_info['levels'] - $djatoka_params_translated['level'], 2);
+    $exp_reduction = pow(2, $image_info['levels'] - $djatoka_params_translated['level']);
     $powpow = function($v) use ($exp_reduction) {
-      return ($v/(int)$exp_reduction);
+      if ($expo_reduction!=0) {
+        return (int)($v/(int)$exp_reduction);
+      }
+      return $v;
     };
     list($dw, $dh) = array_map($powpow, $region_dimensions);
     list($dx, $dy) = $offsets;
