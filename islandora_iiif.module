@@ -73,7 +73,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   else {
     drupal_add_http_header('Status', '404 Not Found');
   }
-  exit();
+  drupal_page_footer();
 }
 
 /**
@@ -99,7 +99,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
   else {
     drupal_add_http_header('Status', '404 Not Found');
   }
-  exit();
+  drupal_page_footer();
 }
 
 
