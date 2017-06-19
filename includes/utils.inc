@@ -123,14 +123,14 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     case 1 === preg_match('/^(\d+),$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = (int)$match[1].",0";
     $server_ratio = (int)($region_dimensions[0]) / (int) $match[1];
-    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level = $image_info['levels'] - floor(log($server_ratio, 2));
     $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break;
     case 1 === preg_match('/^,(\d+)$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = "0,".(int)$match[1];
     $server_ratio = (int)($region_dimensions[1]) / (int)$match[1];
-    $level = $image_info['levels'] - round(log($server_ratio, 2),0);
+    $level = $image_info['levels'] - floor((log($server_ratio, 2));
     $level =  $level < 1 ? 1 : $level;
     $djatoka_params_translated['level'] = $level;
     break;
@@ -139,7 +139,7 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     // without the log() we can really go over 1.0 on scale as much as we want
     // But since IIIF is all about exposing, should we allow that much traffic?
     $server_ratio = $match[1]/100;
-    $level = $image_info['levels'] - round(log(1/$server_ratio, 2),0);
+    $level = $image_info['levels'] - floor(log(1/$server_ratio, 2));
     $level =  $level < 1 ? 1 : $level;
     $reduction = $image_info['levels'] - $level;
     //Would love to use ** but was introduced in php 5.6
@@ -159,8 +159,8 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
     break;
     case 1 === preg_match('/^!(\d+),(\d+)$/', $iiif_params['size'], $match):
     $best_scale = min($match[1]/$region_dimensions[0], $match[2]/$region_dimensions[1]);
-    $dw = round(ceil($region_dimensions[0] * $best_scale),0);
-    $dh = round(ceil($region_dimensions[1] * $best_scale),0);
+    $dw = floor(ceil($region_dimensions[0] * $best_scale),0);
+    $dh = floor(ceil($region_dimensions[1] * $best_scale),0);
     $djatoka_params_translated['scale'] = $dw . "," . $dh;
     $server_ratio = ($region_dimensions[0] / $dw);
     $level = $image_info['levels'] - round(log($server_ratio, 2),0);
@@ -226,6 +226,14 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
       'token' => islandora_get_object_token($pid, "OBJ", 2),
     ),
   );
+  
+  
+  // Djatoka is terrible at resizing (quality loss) so allow 
+  // for a setting to override that and resize after via imagemagick
+  if (variable_get('islandora_iiif_resizeondrupal', false)) {
+    
+    
+  }
   // Output format should be requested by the caller.
   // @TODO add to $djatoka_params_translated
   $djatoka_metadata_params = array(
