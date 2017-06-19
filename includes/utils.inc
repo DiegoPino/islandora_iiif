@@ -218,7 +218,7 @@ function islandora_iiif_djatoka_metadata_request($pid) {
    return drupal_http_request($djatoka_url);
 }
 
-function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) {
+function islandora_iiif_djatoka_image_request_url($pid, $djatoka_params_translated) {
   module_load_include('inc', 'islandora', 'includes/authtokens');
   $uri_params = array(
     'absolute' => TRUE,
@@ -228,12 +228,6 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
   );
   
   
-  // Djatoka is terrible at resizing (quality loss) so allow 
-  // for a setting to override that and resize after via imagemagick
-  if (variable_get('islandora_iiif_resizeondrupal', false)) {
-    
-    
-  }
   // Output format should be requested by the caller.
   // @TODO add to $djatoka_params_translated
   $djatoka_metadata_params = array(
@@ -247,7 +241,11 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
     'svc.region' => $djatoka_params_translated['region'],
     'svc.scale' =>  $djatoka_params_translated['scale'],
   );
- 
+  //@TODO make sure to change this to an argument to make the call faster
+  if (variable_get('islandora_iiif_resizeondrupal', false)) {
+   unset($djatoka_metadata_params['svc.scale']);
+  }
+
    //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
    $settings = islandora_openseadragon_get_settings();
    $djatoka_url = url($settings['djatokaServerBaseURL'], array(
@@ -256,5 +254,5 @@ function islandora_iiif_djatoka_image_request($pid, $djatoka_params_translated) 
      'query' => $djatoka_metadata_params,
    ));
    dpm($djatoka_url);
-   return drupal_http_request($djatoka_url);
+   return $djatoka_url;
 }

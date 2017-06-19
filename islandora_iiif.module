@@ -63,12 +63,46 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   $theresponsecode = (int)$metadata_response->code;
   //dpm($theresponsecode);
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
-    $thatthing = islandora_iiif_djatoka_region(json_decode($metadata_response->data, true), $iiif_request);
+    $translated_params = islandora_iiif_djatoka_region(json_decode($metadata_response->data, true), $iiif_request);
     drupal_add_http_header('Content-Type', 'image/jp2');
     //@TODO hookify this so others can alter the canonical 
     drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jp2>;rel="canonical"');
-    $theimage = islandora_iiif_djatoka_image_request($object->id, $thatthing);
-    print $theimage->data;
+    $djatoka_url = islandora_iiif_djatoka_image_request_url($object->id, $translated_params);
+    // Djatoka is terrible at resizing (quality loss) so allow 
+    // for a setting to override that and resize after via imagemagick
+    if (variable_get('islandora_iiif_resizeondrupal', false)) {
+      // The idea is this:
+      // If this is enabled, the right Level will be selected
+      // but the final scale should happen via imagemagick just before returning.
+      // That should lead to a compromise situation: a bit slower than asking 
+      // Adored directly, but since level should be close to final, imagemagick
+      // overhead will be not that wrong and mostly and better quality.
+    
+     
+      $theimage = drupal_http_request($djatoka_url);
+      $imagick = new Imagick();
+      $imagick->readImageBlob($theimage->data);
+      $scale = explode(",",$translated_params['scale']);
+      $scale = array_reverse($scale);
+
+      // make every empty string a 0
+      $scale = array_map(function($val) { if (empty(trim($val))) return 0; }, $scale);
+      
+      
+      
+      if (count($scale) == 1) {
+        $scale[] = 0;
+      }
+     
+        $imagick->scaleImage($scale[0], $scale[1], true);
+        print  $imagick->getImageBlob();
+    
+    }
+    else {
+      $theimage = drupal_http_request($djatoka_url);
+      print $theimage->data;
+    }
+    
   }
   else {
     drupal_add_http_header('Status', '404 Not Found');
