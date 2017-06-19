@@ -81,7 +81,9 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
      
       $theimage = drupal_http_request($djatoka_url);
       $imagick = new Imagick();
+      
       $imagick->readImageBlob($theimage->data);
+      $imagick->setImageFormat('jp2');
       $scale = explode(",",$translated_params['scale']);
       $scale = array_reverse($scale);
 
@@ -94,7 +96,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
         $scale[] = 0;
       }
      
-        $imagick->scaleImage($scale[0], $scale[1], true);
+        $imagick->scaleImage($scale[0], $scale[1]);
         print  $imagick->getImageBlob();
     
     }
