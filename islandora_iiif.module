@@ -77,28 +77,23 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
       // That should lead to a compromise situation: a bit slower than asking 
       // Adored directly, but since level should be close to final, imagemagick
       // overhead will be not that wrong and mostly and better quality.
-    
-     
       $theimage = drupal_http_request($djatoka_url);
       $imagick = new Imagick();
-      
+
       $imagick->readImageBlob($theimage->data);
       $imagick->setImageFormat('jp2');
       $scale = explode(",",$translated_params['scale']);
-      $scale = array_reverse($scale);
 
       // make every empty string a 0
-      $scale = array_map(function($val) { if (empty(trim($val))) return 0; }, $scale);
-      
-      
-      
+      $scale = array_map(function($val) { if (empty(trim($val))){$val = 0;} return $val;}, $scale);
+
       if (count($scale) == 1) {
         $scale[] = 0;
       }
      
-        $imagick->scaleImage($scale[0], $scale[1]);
-        print  $imagick->getImageBlob();
-    
+      $imagick->scaleImage($scale[0], $scale[1]);
+      print  $imagick->getImageBlob();
+
     }
     else {
       $theimage = drupal_http_request($djatoka_url);
