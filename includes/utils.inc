@@ -119,6 +119,8 @@ function islandora_iiif_djatoka_region($image_info, $iiif_params) {
   //Second Size:
   switch(true) {
     case $iiif_params['size'] == "full" || $iiif_params['size'] == "max":
+    // We will clean all NULLs at the end
+    $djatoka_params_translated['scale'] = NULL;
     break;
     case 1 === preg_match('/^(\d+),$/', $iiif_params['size'], $match):
     $djatoka_params_translated['scale'] = (int)$match[1].",0";
@@ -240,9 +242,14 @@ function islandora_iiif_djatoka_image_request_url($pid, $djatoka_params_translat
     'svc.region' => $djatoka_params_translated['region'],
     'svc.scale' =>  $djatoka_params_translated['scale'],
   );
+  $djatoka_metadata_params= array_filter($djatoka_metadata_params);
   //@TODO make sure to change this to an argument to make the call faster
+
   if (variable_get('islandora_iiif_resizeondrupal', FALSE)) {
    unset($djatoka_metadata_params['svc.scale']);
+   // This is checked again in the caller.
+   // But we need to unset it anyway here because we are making one
+   // single URL out of all this parameters.
   }
 
    $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/resolver');
