@@ -43,7 +43,7 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Resize images on Drupal via imagemagick'),
     '#description' => t('Enabling this can have some perfomance costs in favour of a much better image quality. Djatoka\'s resizing function suffers from quality degradation.'),
-    '#default_value' => $get_default_value('islandora_iiif_resizeondrupal', 0),
+    '#default_value' => (int) $get_default_value('islandora_iiif_resizeondrupal', 0),
   ),
 );
   return system_settings_form($form);
