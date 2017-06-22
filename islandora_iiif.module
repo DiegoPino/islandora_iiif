@@ -2,8 +2,17 @@
 
 /**
 * @file
-* Hooks and callbacks for this module.
+* Main module file for islandora iiif.
 */
+
+
+/**
+ * Implements hook_init().
+ */
+function islandora_iiif_init() {
+  require_once __DIR__ . "/vendor/autoload.php";
+}
+
 
 /**
 * Implements hook_menu().
@@ -26,8 +35,42 @@ function islandora_iiif_menu() {
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'load arguments' => array(1),
     ),
+    'islandora_iiif/%islandora_object/manifest' => array(
+      'page callback' => 'islandora_iiif_manifest_callback',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(1),
+    ),
+    'islandora_iiif/collection/%islandora_object' => array(
+      'page callback' => 'islandora_iiif_manifest_callback',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(2),
+    ),
+    'islandora_iiif/collection/top' => array(
+      'page callback' => 'islandora_iiif_collection_manifest_callback',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_iiif_rootcollection_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+    ),
   );
 }
+
+function islandora_iiif_rootcollection_access($op, $object, $user = NULL) {
+  // get root as we have it configured globally. We can always get 
+  // islandora:root directly via the PID specific collection manifest
+  $root_pid = variable_get('islandora_repository_pid', 'islandora:root');
+  if ($object = islandora_object_load($root_pid)) {
+    return islandora_object_access($op, $object, $user);
+  }
+  return false;
+}
+
 
 /**
 * Our Proxied callback handler()
@@ -130,11 +173,7 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
   else {
     drupal_add_http_header('Status', '404 Not Found');
   }
-  drupal_page_footer();
 }
-
-
-
 
 function islandora_iiif_file_url_alter(&$uri) {
   global $user;

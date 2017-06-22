@@ -209,8 +209,8 @@ function islandora_iiif_djatoka_metadata_request($pid) {
   );
  
    //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
-   $settings = islandora_openseadragon_get_settings();
-   $djatoka_url = url($settings['djatokaServerBaseURL'], array(
+   $settings = islandora_iiif_get_settings();
+   $djatoka_url = url($settings['islandora_iiif_djatoka_url'], array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,

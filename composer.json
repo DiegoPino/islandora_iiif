@@ -1,0 +1,15 @@
+{
+    "name": "dpino/islandora-iiif",
+    "description": "A iiif backend implementation for Islandora 7.x",
+    "require": {
+        "symfony/process": "^3.0",
+        "twig/twig": "^1.24",
+        "doctrine/cache": "^1.6"
+    },
+    "authors": [
+        {
+            "name": "DiegoPino",
+            "email": "dpino@metro.org"
+        }
+    ]
+}
