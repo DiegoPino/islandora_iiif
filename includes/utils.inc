@@ -208,7 +208,7 @@ function islandora_iiif_djatoka_metadata_request($pid) {
     'svc_id' => 'info:lanl-repo/svc/getMetadata'
   );
  
-  $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/');
+  $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/resolver');
   $djatoka_url = url($djatoka_server_url, array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
@@ -245,7 +245,7 @@ function islandora_iiif_djatoka_image_request_url($pid, $djatoka_params_translat
    unset($djatoka_metadata_params['svc.scale']);
   }
 
-   $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/');
+   $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/resolver');
    $djatoka_url = url($djatoka_server_url, array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),

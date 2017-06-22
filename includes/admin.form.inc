@@ -22,7 +22,7 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     return isset($form_state['values'][$name]) ? $form_state['values'][$name] : variable_get($name, $default);
   };
   $solr_enabled = module_exists('islandora_solr');
-  $djatoka_url = $get_default_value('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/');
+  $djatoka_url = $get_default_value('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/resolver');
   $djatoka_available_message = islandora_iiif_admin_settings_form_djatoka_available_message($djatoka_url);
   $form = array(
   'islandora_iiif_djatoka_url' => array(
@@ -30,7 +30,7 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     '#prefix' => '<div id="djatoka-path-wrapper">',
     '#suffix' => '</div>',
     '#title' => t('Adore-djatoka URL'),
-    '#description' => filter_xss(t('<strong>Web server accessible</strong> URL to the djatoka instance.<br/>!msg', array('!msg' => $djatoka_available_message))),
+    '#description' => filter_xss(t('<strong>Web server accessible</strong> URL to the djatoka instance\'s resolver endpoint.<br/>!msg', array('!msg' => $djatoka_available_message))),
     '#default_value' => $djatoka_url,
     '#ajax' => array(
       'callback' => 'islandora_iiif_admin_settings_form_djatoka_ajax_callback',
