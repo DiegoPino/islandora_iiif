@@ -38,13 +38,14 @@ function islandora_iiif_menu() {
     'islandora_iiif/%islandora_object/manifest' => array(
       'page callback' => 'islandora_iiif_manifest_callback',
       'page arguments' => array(1),
+      'file' => 'includes/manifest.inc',
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'load arguments' => array(1),
     ),
     'islandora_iiif/collection/%islandora_object' => array(
-      'page callback' => 'islandora_iiif_manifest_callback',
+      'page callback' => 'islandora_iiif_collection_callback',
       'page arguments' => array(1),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
@@ -52,7 +53,7 @@ function islandora_iiif_menu() {
       'load arguments' => array(2),
     ),
     'islandora_iiif/collection/top' => array(
-      'page callback' => 'islandora_iiif_collection_manifest_callback',
+      'page callback' => 'islandora_iiif_collection_callback',
       'page arguments' => array(1),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_iiif_rootcollection_access',

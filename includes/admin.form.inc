@@ -30,7 +30,7 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     '#prefix' => '<div id="djatoka-path-wrapper">',
     '#suffix' => '</div>',
     '#title' => t('Adore-djatoka URL'),
-    '#description' => filter_xss(t('<strong>Web server accessible</strong> URL to the djatoka instance\'s resolver, including the trailing \'/resolver part\').<br/>!msg', array('!msg' => $djatoka_available_message))),
+    '#description' => filter_xss(t('<strong>Server accessible</strong> URL to the djatoka instance\'s resolver, including the trailing \'/resolver\' part). <br/>!msg', array('!msg' => $djatoka_available_message))),
     '#default_value' => $djatoka_url,
     '#ajax' => array(
       'callback' => 'islandora_iiif_admin_settings_form_djatoka_ajax_callback',
@@ -45,6 +45,8 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     '#description' => t('Enabling this can have some perfomance costs in favour of a much better image quality. Djatoka\'s resizing function suffers from quality degradation.'),
     '#default_value' => (int) $get_default_value('islandora_iiif_resizeondrupal', 0),
   ),
+  // @TODO need to define how we are going to fetch web annotations. Probably add an API entry and a hookable callback selector
+  
 );
   return system_settings_form($form);
 }
