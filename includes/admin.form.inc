@@ -30,7 +30,7 @@ function islandora_iiif_admin_settings_form(array $form, array &$form_state) {
     '#prefix' => '<div id="djatoka-path-wrapper">',
     '#suffix' => '</div>',
     '#title' => t('Adore-djatoka URL'),
-    '#description' => filter_xss(t('<strong>Web server accessible</strong> URL to the djatoka instance\'s resolver endpoint.<br/>!msg', array('!msg' => $djatoka_available_message))),
+    '#description' => filter_xss(t('<strong>Web server accessible</strong> URL to the djatoka instance\'s resolver, including the trailing \'/resolver part\').<br/>!msg', array('!msg' => $djatoka_available_message))),
     '#default_value' => $djatoka_url,
     '#ajax' => array(
       'callback' => 'islandora_iiif_admin_settings_form_djatoka_ajax_callback',
@@ -76,6 +76,9 @@ function islandora_iiif_admin_settings_form_djatoka_ajax_callback(array $form, a
  *   A message in html detailing if the djatoka is accessible.
  */
 function islandora_iiif_admin_settings_form_djatoka_available_message($djatoka_url) {
+  $djatoka_url = trim($djatoka_url, '/');
+  $djatoka_no_resolver = preg_replace('/resolver$/', '', $djatoka_url);
+  
   $file_headers = @get_headers($djatoka_url);
   $djatoka_availible = strstr($file_headers[0], '200') !== FALSE;
   if ($djatoka_availible) {
