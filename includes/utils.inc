@@ -208,9 +208,8 @@ function islandora_iiif_djatoka_metadata_request($pid) {
     'svc_id' => 'info:lanl-repo/svc/getMetadata'
   );
  
-   //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
-   $settings = islandora_iiif_get_settings();
-   $djatoka_url = url($settings['islandora_iiif_djatoka_url'], array(
+  $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/');
+  $djatoka_url = url($djatoka_server_url, array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
@@ -242,17 +241,15 @@ function islandora_iiif_djatoka_image_request_url($pid, $djatoka_params_translat
     'svc.scale' =>  $djatoka_params_translated['scale'],
   );
   //@TODO make sure to change this to an argument to make the call faster
-  if (variable_get('islandora_iiif_resizeondrupal', false)) {
+  if (variable_get('islandora_iiif_resizeondrupal', FALSE)) {
    unset($djatoka_metadata_params['svc.scale']);
   }
 
-   //@TODO Don't like it but will have to do it: Make openseadragon a dependency.
-   $settings = islandora_openseadragon_get_settings();
-   $djatoka_url = url($settings['djatokaServerBaseURL'], array(
+   $djatoka_server_url = variable_get('islandora_iiif_djatoka_url', 'http://localhost:8080/adore-djatoka/');
+   $djatoka_url = url($djatoka_server_url, array(
      'absolute' => TRUE,
      'language' => (object)array('language' => FALSE),
      'query' => $djatoka_metadata_params,
    ));
-   dpm($djatoka_url);
    return $djatoka_url;
 }
