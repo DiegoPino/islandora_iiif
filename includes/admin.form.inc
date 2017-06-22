@@ -79,7 +79,7 @@ function islandora_iiif_admin_settings_form_djatoka_available_message($djatoka_u
   $djatoka_url = trim($djatoka_url, '/');
   $djatoka_no_resolver = preg_replace('/resolver$/', '', $djatoka_url);
   
-  $file_headers = @get_headers($djatoka_url);
+  $file_headers = @get_headers($djatoka_no_resolver);
   $djatoka_availible = strstr($file_headers[0], '200') !== FALSE;
   if ($djatoka_availible) {
     $image = theme_image(array('path' => 'misc/watchdog-ok.png', 'attributes' => array()));
