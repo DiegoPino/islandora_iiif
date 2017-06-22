@@ -63,7 +63,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
     $separator = "\n";
   }
   
-  
+  $descriptions = array();
   
   foreach ($associations as $configuration_id) {
     $field = islandora_solr_metadata_get_fields($configuration_id['configuration_id']);
