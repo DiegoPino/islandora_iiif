@@ -58,6 +58,15 @@ function islandora_iiif_menu() {
       'access callback' => 'islandora_iiif_rootcollection_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
     ),
+    'admin/islandora/tools/internet_iiif_admin' => array(
+      'title' => 'IIIF Module configuration',
+      'description' => 'Configure the IIIF Module.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('islandora_iiif_admin_settings_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'includes/admin.form.inc',
+      'type' => MENU_NORMAL_ITEM,
+    ),
   );
 }
 
