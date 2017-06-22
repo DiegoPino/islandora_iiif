@@ -48,6 +48,7 @@ function islandora_iiif_islandora_manifest_solr_backend_callable($object, $page,
 */ 
 function islandora_iiif_manifest_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
+  module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
   $manifest = new \stdClass;
   $meta = '"@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "http://example.org/iiif/book1/manifest",
