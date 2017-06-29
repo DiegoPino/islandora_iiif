@@ -54,14 +54,9 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   "@id": "http://example.org/iiif/book1/manifest",
   "@type": "sc:Manifest",';
   $manifest->label = $object->label;
- 
-  
-  
+   
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
   dpm($associations);
-
-
-
 
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
 
@@ -71,8 +66,13 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   
   $descriptions = array();
   $db_fields = array();
+  $solr_fields = array();
+  $metadata = array();
+  $finaldescription = '';
+  
   foreach ($associations as $configuration_id) {
     $field = islandora_solr_metadata_get_fields($configuration_id['configuration_id']);
+    dpm($field);
     $db_fields = array_merge($db_fields, $field);
     $description = islandora_solr_metadata_retrieve_description($configuration_id['configuration_id']);
     if ($description['description_field'] !== NULL) {
@@ -92,11 +92,11 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
     );
   }
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
-  islandora_solr_metadata_query_fields($object, $solr_fields);
-  foreach ($solr_fields as $key => $value) {
-    $metadata[] = array("label" => $key, "value" =>$value);
+  if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
+    foreach ($solr_fields as $key => $value) {
+      $metadata[] = array("label" => $key, "value" =>$value);
+    }
   }
-  
   $manifest->metadata = $metadata;
   $manifest->description = $finaldescription;
   // The reason i went for current_path() is because someone could 
