@@ -71,7 +71,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
     $db_fields = array_merge($db_fields, $field);
     $description = islandora_solr_metadata_retrieve_description($configuration_id['configuration_id']);
     if ($description['description_field'] !== NULL) {
-      $db_fields  = array_merge($db_fields, $description['description_field']);
+      $db_fields  = array_merge($db_fields, $description);
     }
   }
   
