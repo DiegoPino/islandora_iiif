@@ -56,7 +56,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   $manifest->label = $object->label;
    
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
-  dpm($associations);
+  //dpm($associations);
 
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
 
@@ -125,7 +125,6 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
 ),
 );
 drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-dpm($manifest);
 echo json_encode($manifest, JSON_PRETTY_PRINT);
 drupal_page_footer();
  
