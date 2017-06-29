@@ -49,13 +49,7 @@ function islandora_iiif_islandora_manifest_solr_backend_callable($object, $page,
 function islandora_iiif_manifest_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
-  $manifest = new \stdClass;
-  
-  $meta = '"@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "http://example.org/iiif/book1/manifest",
-  "@type": "sc:Manifest",';
-  
-  $manifest->label = $object->label;
+ 
    
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
   dpm($associations);
@@ -100,6 +94,21 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
       $metadata[] = array("label" => $value['display_label'], "value" =>$value['value']);
     }
   }
+  
+  $manifest = new \stdClass;
+  $manifest['@context'] = "http://iiif.io/api/presentation/2/context.json";
+  $manifest['@id'] = url(current_path(),
+     array(
+      'absolute' => TRUE,
+      'language' => (object)array('language' => FALSE),
+    )
+  );
+  $manifest['@type'] = "sc:Manifest";
+  
+  $manifest->label = $object->label;
+  
+  
+  
   $manifest->metadata = $metadata;
   $manifest->description = $finaldescription;
   // The reason i went for current_path() is because someone could 
@@ -108,12 +117,6 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   // alterhooks.
   
   $manifest->description = array(
-    "@id" => url(current_path(),
-    array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    )
-  ),
   "thumbnail" => array(
     "@id" => url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
       'absolute' => TRUE,
