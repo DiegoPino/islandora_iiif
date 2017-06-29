@@ -114,7 +114,9 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   ),
 ),
 );
+drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
 dpm($manifest);
 echo json_encode($manifest, JSON_PRETTY_PRINT);
+drupal_page_footer();
  
 }
