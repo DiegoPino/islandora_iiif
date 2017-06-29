@@ -93,14 +93,14 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   }
   
   $manifest = new \stdClass;
-  $manifest['@context'] = "http://iiif.io/api/presentation/2/context.json";
-  $manifest['@id'] = url(current_path(),
+  $manifest->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
+  $manifest->{'@id'} = url(current_path(),
      array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
     )
   );
-  $manifest['@type'] = "sc:Manifest";
+  $manifest->{'@type'} = "sc:Manifest";
   
   $manifest->label = $object->label;
   
