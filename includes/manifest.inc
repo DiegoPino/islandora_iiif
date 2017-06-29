@@ -58,6 +58,11 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   
   
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
+  dpm($associations);
+
+
+
+
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
 
   if (empty($separator)) {
@@ -65,7 +70,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   }
   
   $descriptions = array();
-  
+  $db_fields = array();
   foreach ($associations as $configuration_id) {
     $field = islandora_solr_metadata_get_fields($configuration_id['configuration_id']);
     $db_fields = array_merge($db_fields, $field);
