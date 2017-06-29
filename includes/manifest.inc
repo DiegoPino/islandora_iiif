@@ -96,6 +96,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
   if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
     foreach ($solr_fields as $key => $value) {
+      dpm($value);
       $metadata[] = array("label" => $value['label'], "value" =>$value['value']);
     }
   }
