@@ -52,7 +52,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
  
    
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
-  dpm($associations);
+
 
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
 
