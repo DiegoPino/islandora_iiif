@@ -97,7 +97,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
     foreach ($solr_fields as $key => $value) {
       dpm($value);
-      $metadata[] = array("label" => $value['label'], "value" =>$value['value']);
+      $metadata[] = array("label" => $value['display_label'], "value" =>$value['value']);
     }
   }
   $manifest->metadata = $metadata;
