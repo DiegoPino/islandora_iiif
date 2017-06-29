@@ -75,6 +75,8 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
       $descriptions[] = $description;
     }
   }
+  
+  dpm($descriptions);
   if (count($descriptions)) {
     $finaldescription = implode($separator, $descriptions);
   }
