@@ -115,7 +115,6 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
 ),
 );
 dpm($manifest);
-echo json_encode($manifest);
+echo json_encode($manifest, JSON_PRETTY_PRINT);
  
-  
 }
