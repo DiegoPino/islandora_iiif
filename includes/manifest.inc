@@ -75,9 +75,8 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
       $descriptions[] = $description;
     }
   }
-  
-  dpm($descriptions);
-  if (count($descriptions)) {
+  kpr($descriptions);
+   if (count($descriptions)) {
     $finaldescription = implode($separator, $descriptions);
   }
   foreach ($db_fields as $solr_field => $value) {
@@ -118,8 +117,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   // The use of url() also allows for further altering via outgoing and incomming
   // alterhooks.
   
-  $manifest->description = array(
-  "thumbnail" => array(
+  $manifest->thumbnail = array(
     "@id" => url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
@@ -130,7 +128,6 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
     "@id" => "http://example.org/images/book1-page1",
     "profile" => "http://iiif.io/api/image/2/level1.json",
   ),
-),
 );
 drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
 echo json_encode($manifest, JSON_PRETTY_PRINT);
