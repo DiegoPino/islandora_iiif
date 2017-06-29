@@ -68,14 +68,13 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   
   foreach ($associations as $configuration_id) {
     $field = islandora_solr_metadata_get_fields($configuration_id['configuration_id']);
-    dpm($field);
     $db_fields = array_merge($db_fields, $field);
     $description = islandora_solr_metadata_retrieve_description($configuration_id['configuration_id']);
     if ($description['description_field'] !== NULL) {
       $descriptions[] = $description;
     }
   }
-  kpr($descriptions);
+  dpm($descriptions);
    if (count($descriptions)) {
     $finaldescription = implode($separator, $descriptions);
   }
