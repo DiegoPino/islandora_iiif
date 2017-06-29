@@ -94,8 +94,13 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   
   $manifest->metadata = $metadata;
   $manifest->description = $finaldescription;
+  // The reason i went for current_path() is because someone could 
+  // wants to serve this via an alias.
+  // The use of url() also allows for further altering via outgoing and incomming
+  // alterhooks.
+  
   $manifest->description = array(
-    "@id" => url("islandora/object/{$object->id}/datastream/TN/view",
+    "@id" => url(current_path(),
     array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
