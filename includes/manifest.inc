@@ -50,9 +50,11 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
   $manifest = new \stdClass;
+  
   $meta = '"@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "http://example.org/iiif/book1/manifest",
   "@type": "sc:Manifest",';
+  
   $manifest->label = $object->label;
    
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
@@ -94,7 +96,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
   if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
     foreach ($solr_fields as $key => $value) {
-      $metadata[] = array("label" => $key, "value" =>$value);
+      $metadata[] = array("label" => $value['label'], "value" =>$value['value']);
     }
   }
   $manifest->metadata = $metadata;
