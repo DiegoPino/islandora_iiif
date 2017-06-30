@@ -128,7 +128,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   ),
 );
 drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-echo json_encode($manifest, JSON_PRETTY_PRINT);
+echo json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 drupal_page_footer();
  
 }
