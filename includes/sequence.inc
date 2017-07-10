@@ -29,9 +29,13 @@ function islandora_iiif_islandora_iiif_parentsolr_predicate(AbstractObject $obje
   
   // using literal keys is faster way to avoid duplicates than
   // de-duplicating
-  $predicates[$rels_predicate_compound] = $rels_predicate_compound;
-  $predicates[$rels_predicate_paged] = $rels_predicate_paged;
-  $predicates[$rels_predicate_generic_member] = $rels_predicate_generic_member;
+  $condition = format_string(':("info:fedora/!pid" OR "!pid")', array(
+      '!pid' => $object->id,
+    ));
+  
+  $predicates[$rels_predicate_compound] = $rels_predicate_compound.$condition;
+  $predicates[$rels_predicate_paged] = $rels_predicate_paged.$condition;
+  $predicates[$rels_predicate_generic_member] = $rels_predicate_generic_member.$condition;
   return $predicates;
 }
 
@@ -50,9 +54,11 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
   $solr_predicates = module_invoke_all('islandora_iiif_parentsolr_predicate', $object);
   // And the alter for those who like to alter.
   drupal_alter('islandora_iiif_parentsolr_predicate', $object, $solr_predicates);
+  
+ 
  
   $qp->buildQuery(format_string("!predicates", array(
-    '!predicates' => !empty($solr_predicates) ? (implode(' OR ', $solr_predicates) . ':("info:fedora/!pid" OR "!pid")') : '',
+    '!predicates' => !empty($solr_predicates) ? (implode(' OR ', $solr_predicates)) : '',
     '!pid' => $object->id,
   )), drupal_get_query_parameters());
 
