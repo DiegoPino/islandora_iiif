@@ -96,11 +96,11 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   
   $manifest = new \stdClass;
   $manifest->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
-  $manifest->{'@id'} = url(current_path(),
+  $manifest->{'@id'} = urldecode(url(current_path(),
      array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
-    )
+    ))
   );
   $manifest->{'@type'} = "sc:Manifest";
   
@@ -116,10 +116,10 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   // alterhooks.
   
   $manifest->thumbnail = array(
-    "@id" => url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
+    "@id" => urldecode(url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
-    )
+    ))
   ),
   "service" => array(
     "@context" => "http://iiif.io/api/image/2/context.json",
