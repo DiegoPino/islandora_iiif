@@ -110,6 +110,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   $sequence->label = "Normal";
   $canvases = array();
   foreach ($canvas_list[1] as $canvas_info) {
+    dpm($canvas_info);
     $id = urldecode(url("islandora_iiif/{$canvas_info['PID']}/canvas/default", array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
