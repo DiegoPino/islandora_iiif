@@ -115,13 +115,14 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
       )));
-  
+      $height = isset($canvas_info['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_height_literal_s'] : '0';
+      $width = isset($canvas_info['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_width_literal_s'] : '0';
     $canvases[] = array(
       "@id" => $id , 
       "@type" => "sc:Canvas", 
       "label" => "Label", 
-      "height" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'], 
-      "width" => $canvas_info['solr_doc']['RELS_INT_width_literal_s'], 
+      "height" => $height, 
+      "width" => $width, 
       "images" => array (
       "@type" => "oa:Annotation", 
       "motivation" => "sc:painting", 
@@ -132,8 +133,8 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
           ))
         ), 
         "@type" => "dctypes:Image", 
-        "height" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'], 
-        "width" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'],
+        "height" => $height,
+        "width" => $width, 
         ), 
       "on" => $id, 
       )
