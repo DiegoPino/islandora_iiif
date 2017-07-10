@@ -47,9 +47,9 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
   module_load_include('inc', 'islandora_solr', 'includes/db');
   $qp = new IslandoraSolrQueryProcessor();
   $solr_predicates = array();
-  $solr_predicate_providers = module_invoke_all('islandora_iiif_parentsolr_predicate', $predicates, $object);  
+  $solr_predicate_providers = module_invoke_all('islandora_iiif_parentsolr_predicate', $solr_predicates, $object);  
   // And the alter for those who like to alter.
-  drupal_alter('islandora_iiif_parentsolr_predicate', $object, $predicates);
+  drupal_alter('islandora_iiif_parentsolr_predicate', $object, $solr_predicates);
  
   $qp->buildQuery(format_string("!predicates", array(
     '!predicates' => !empty($solr_predicates) ? (implode('OR ', $solr_predicates) . ':("info:fedora/!pid" OR "!pid")') : '',
