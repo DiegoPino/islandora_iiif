@@ -22,9 +22,9 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
   
  
  
-    $qp->buildQuery(format_string('"PID:!pid"'), array(
+    $qp->buildQuery(format_string('PID:"!pid"', array(
       '!pid' => $object->id,
-    ));
+    )));
     
     $limit = variable_get('islandora_solr_num_of_results', '20');
 
