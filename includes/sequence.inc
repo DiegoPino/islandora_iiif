@@ -80,14 +80,11 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
     $qp->islandoraSolrResult['response']['objects'],
   );
 };
-  
+
 /**
 * This is the actual manifest building function
 */ 
-function islandora_iiif_sequence_callback(AbstractObject $object) {
-  module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
-  module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
-  
+function islandora_iiif_sequence_generator(AbstractObject $object) { 
   // This is weird. Just to test really. I´m putting the limit to 2000 here. Would love if 
   $canvas_list = islandora_iiif_islandora_sequence_solr_backend_callable($object, 1, 2000);
   
@@ -138,11 +135,18 @@ function islandora_iiif_sequence_callback(AbstractObject $object) {
  
   $sequence->canvases = $canvases;
   }
-  
 
-
-drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-echo json_encode($sequence, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-drupal_page_footer();
- 
+  return $sequence;
 }
+
+/**
+* This is the actual manifest building function
+*/ 
+function islandora_iiif_sequence_callback(AbstractObject $object) {
+  $sequence = islandora_iiif_sequence_generator($object);
+  drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
+  echo json_encode($sequence, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  drupal_page_footer();
+
+}
+

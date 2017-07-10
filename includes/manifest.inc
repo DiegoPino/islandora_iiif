@@ -49,6 +49,7 @@ function islandora_iiif_islandora_manifest_solr_backend_callable($object, $page,
 function islandora_iiif_manifest_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
+  module_load_include('inc', 'islandora_iiif', 'includes/sequence');
  
    
   $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
@@ -133,14 +134,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
 
  // And to make this legit we need a sequence with some canvases
  
- $manifest->sequences = array(
-
-        "@id" =>"http://example.org/iiif/book1/sequence/normal",
-        "@type"  => "sc:Sequence",
-        "label" => "Current Page Order"
-        // sequence's page order should be included here, see below...
-      // Any additional sequences can be referenced here...
-    );
+ $manifest->sequences = islandora_iiif_sequence_generator($object);
 
 
 
