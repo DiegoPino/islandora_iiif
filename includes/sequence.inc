@@ -119,8 +119,8 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
       "@id" => $id , 
       "@type" => "sc:Canvas", 
       "label" => "Label", 
-      "height" => $canvas_info['RELS_INT_height_literal_s'], 
-      "width" => $canvas_info['RELS_INT_width_literal_s'], 
+      "height" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'], 
+      "width" => $canvas_info['solr_doc']['RELS_INT_width_literal_s'], 
       "images" => array (
       "@type" => "oa:Annotation", 
       "motivation" => "sc:painting", 
@@ -131,8 +131,8 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
           ))
         ), 
         "@type" => "dctypes:Image", 
-        "height" => $canvas_info['RELS_INT_height_literal_s'], 
-        "width" => $canvas_info['RELS_INT_height_literal_s'],
+        "height" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'], 
+        "width" => $canvas_info['solr_doc']['RELS_INT_height_literal_s'],
         ), 
       "on" => $id, 
       )
