@@ -62,7 +62,7 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
   $qp->solrLimit = $limit;
 
   // We should have a default sort here for sequences.
-  $qp->solrParams['sort'] = "RELS_EXT_isSequenceNumber_s, RELS_EXT_isPageNumber_s"; 
+  $qp->solrParams['sort'] = "RELS_EXT_isSequenceNumber_s ASC, RELS_EXT_isPageNumber_s ASC"; 
   if (!empty($qp->internalSolrParams['sort'])) {
     $qp->solrParams['sort'] .= ",". $qp->internalSolrParams['sort'];
   }
