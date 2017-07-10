@@ -2,51 +2,37 @@
 /**
 * Implements hook_islandora_iiif_manifest_query_backends().
 */
-function islandora_iiif_islandora_iiif_manifest_query_backends() {
+function islandora_iiif_islandora_iiif_canvas_query_backends() {
   $module_path = drupal_get_path('module', 'islandora_solr');
   return array(
     'islandora_solr_query_backend' => array(
       'title' => t('Manifest via Solr'),
-      'callable' => 'islandora_iiif_islandora_manifest_solr_backend_callable',
-      'file' => "$module_path/includes/manifest.inc",
+      'callable' => 'islandora_iiif_islandora_canvas_solr_backend_callable',
+      'file' => "$module_path/includes/canvas.inc",
     ),
   );
 }
 /**
-* Implements callback_islandora_iiif_manifest_query_backends()
+* Implements callback_islandora_iiif_canvas_query_backends()
 */
-function islandora_iiif_islandora_manifest_solr_backend_callable($object, $page, $limit) {
+function islandora_iiif_islandora_canvas_solr_backend_callable($pid) {
   module_load_include('inc', 'islandora_solr', 'includes/db');
-  $qp = new IslandoraSolrQueryProcessor();
-
-  $qp->buildQuery(format_string('!member_field:("info:fedora/!pid" OR "!pid") OR !collection_member_field:("info:fedora/!pid" OR "!pid")', array(
-    '!member_field' => variable_get('islandora_solr_member_of_field', 'RELS_EXT_isMemberOf_uri_ms'),
-    '!pid' => $object->id,
-    '!collection_member_field' => variable_get('islandora_solr_member_of_collection_field', 'RELS_EXT_isMemberOfCollection_uri_ms'),
-  )), drupal_get_query_parameters());
-
-  $limit = variable_get('islandora_solr_num_of_results', '20');
-
-  $qp->solrStart = $page * $limit;
-  $qp->solrLimit = $limit;
-
-  $qp->solrParams['sort'] = $qp->internalSolrParams['sort'];
-
-  $qp->executeQuery();
-
-  $map_to_pids = function ($result) {
-    return $result['PID'];
-  };
+  // yeah, looks like silly, but, islandora does not implement many canvases pero Object.
+  // But could. So for now we just return the same PID and nothig more.
+  
+  
+  // RELS_INT_height_literal_s 
+  
   return array(
-    $qp->islandoraSolrResult['response']['numFound'],
-    array_map($map_to_pids, $qp->islandoraSolrResult['response']['objects']),
+    1,
+    $pid,
   );
 };
   
 /**
-* This is the actual manifest building function
+* This is the actual canvas building function
 */ 
-function islandora_iiif_manifest_callback(AbstractObject $object) {
+function islandora_iiif_canvas_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
  
