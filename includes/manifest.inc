@@ -123,8 +123,11 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   ),
   "service" => array(
     "@context" => "http://iiif.io/api/image/2/context.json",
-    "@id" => "http://example.org/images/book1-page1",
-    "profile" => "http://iiif.io/api/image/2/level1.json",
+    "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
+      'absolute' => TRUE,
+      'language' => (object)array('language' => FALSE),
+    ))),
+    "profile" => "http://iiif.io/api/image/2/level2.json",
   ),
 );
 drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
