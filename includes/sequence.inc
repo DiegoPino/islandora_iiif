@@ -52,7 +52,7 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
   drupal_alter('islandora_iiif_parentsolr_predicate', $object, $solr_predicates);
  
   $qp->buildQuery(format_string("!predicates", array(
-    '!predicates' => !empty($solr_predicates) ? (implode('OR ', $solr_predicates) . ':("info:fedora/!pid" OR "!pid")') : '',
+    '!predicates' => !empty($solr_predicates) ? (implode(' OR ', $solr_predicates) . ':("info:fedora/!pid" OR "!pid")') : '',
     '!pid' => $object->id,
   )), drupal_get_query_parameters());
 
