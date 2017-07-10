@@ -15,19 +15,34 @@ function islandora_iiif_islandora_iiif_canvas_query_backends() {
 /**
 * Implements callback_islandora_iiif_canvas_query_backends()
 */
-function islandora_iiif_islandora_canvas_solr_backend_callable($pid) {
+function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
   module_load_include('inc', 'islandora_solr', 'includes/db');
-  // yeah, looks like silly, but, islandora does not implement many canvases pero Object.
-  // But could. So for now we just return the same PID and nothig more.
+  module_load_include('inc', 'islandora_solr', 'includes/db');
+    $qp = new IslandoraSolrQueryProcessor();
+  
+ 
+ 
+    $qp->buildQuery(format_string('"PID:!pid"'), array(
+      '!pid' => $object->id,
+    ));
+    
+    $limit = variable_get('islandora_solr_num_of_results', '20');
+
+    $qp->solrStart = 0;
+    $qp->solrLimit = 1;
+
+    // We should have a default sort here for sequences.
+
+
+
+    $qp->executeQuery();
   
   
-  // RELS_INT_height_literal_s 
-  
-  return array(
-    1,
-    $pid,
-  );
-};
+    return array(
+      $qp->islandoraSolrResult['response']['numFound'],
+      $qp->islandoraSolrResult['response']['objects'],
+    );
+}
   
 /**
 * This is the actual canvas building function

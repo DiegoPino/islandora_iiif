@@ -75,10 +75,6 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
 
 
   $qp->executeQuery();
-
-  $map_to_pids = function ($result) {
-    return $result['PID'];
-  };
   
   
   return array(
@@ -91,9 +87,15 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
 * This is the actual manifest building function
 */ 
 function islandora_iiif_sequence_generator(AbstractObject $object) { 
+  module_load_include('inc', 'islandora_iiif', 'includes/canvas');
+
   // This is weird. Just to test really. I´m putting the limit to 2000 here. Would love if 
-  $canvas_list = islandora_iiif_islandora_sequence_solr_backend_callable($object, 1, 2000);
-  
+  $canvas_list = islandora_iiif_islandora_sequence_solr_backend_callable($object, 0, 2000);
+  if ($canvas_list[0] == 0) {
+    // IN case of no little children, we get info directly from the object
+    // @TODO: revisit this logic, not happy.
+    $canvas_list =  islandora_iiif_islandora_canvas_solr_backend_callable($object);
+  }
 
   $sequence = new \stdClass;
   $sequence->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
@@ -106,13 +108,12 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   );
   $sequence->{'@type'} = "sc:Sequence";
   $sequence->label = "Normal";
-  if ($canvas_list[0] > 0) {
   foreach ($canvas_list[1] as $canvas_info) {
     $id = urldecode(url("islandora_iiif/{$canvas_info['PID']}/canvas/default", array(
-        'absolute' => TRUE,
-        'language' => (object)array('language' => FALSE),
-        )));
-    
+      'absolute' => TRUE,
+      'language' => (object)array('language' => FALSE),
+      )));
+  
     $canvases[] = array(
       "@id" => $id , 
       "@type" => "sc:Canvas", 
@@ -120,27 +121,29 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
       "height" => $canvas_info['RELS_INT_height_literal_s'], 
       "width" => $canvas_info['RELS_INT_width_literal_s'], 
       "images" => array (
-        "@type" => "oa:Annotation", 
-        "motivation" => "sc:painting", 
-        "resource" => array(
-          "@id" => urldecode(url("islandora_iiif/{$canvas_info['PID']}/full/max/default.jp2", array(
-            'absolute' => TRUE,
-            'language' => (object)array('language' => FALSE),
-            ))
-          ), 
-          "@type" => "dctypes:Image", 
-          "height" => $canvas_info['RELS_INT_height_literal_s'], 
-          "width" => $canvas_info['RELS_INT_height_literal_s'],
-          ), 
-          "on" => $id, 
-        )
-      );    
-    }
+      "@type" => "oa:Annotation", 
+      "motivation" => "sc:painting", 
+      "resource" => array(
+        "@id" => urldecode(url("islandora_iiif/{$canvas_info['PID']}/full/max/default.jp2", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+          ))
+        ), 
+        "@type" => "dctypes:Image", 
+        "height" => $canvas_info['RELS_INT_height_literal_s'], 
+        "width" => $canvas_info['RELS_INT_height_literal_s'],
+        ), 
+      "on" => $id, 
+      )
+    );    
+  }
+    
+  
 
   // And to make this legit we need a sequence with some canvases
  
   $sequence->canvases = $canvases;
-  }
+  
 
   return $sequence;
 }
