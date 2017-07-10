@@ -16,7 +16,7 @@ function islandora_iiif_islandora_iiif_sequence_query_backends() {
 /**
 * Implements hook_islandora_iiif_parentsolr_predicate()
 */
-function islandora_iiif_islandora_iiif_parentsolr_predicate(array &$predicates, AbstractObject $object = NULL) {
+function islandora_iiif_islandora_iiif_parentsolr_predicate(AbstractObject $object = NULL) {
   
   // This is the simplest implementation of this, we won't
   // care here about a particular CMODEL, we simply respond with 
@@ -32,7 +32,7 @@ function islandora_iiif_islandora_iiif_parentsolr_predicate(array &$predicates, 
   $predicates[$rels_predicate_compound] = $rels_predicate_compound;
   $predicates[$rels_predicate_paged] = $rels_predicate_paged;
   $predicates[$rels_predicate_generic_member] = $rels_predicate_generic_member;
-  
+  return $predicates;
 }
 
 
@@ -47,7 +47,7 @@ function islandora_iiif_islandora_sequence_solr_backend_callable($object, $page,
   module_load_include('inc', 'islandora_solr', 'includes/db');
   $qp = new IslandoraSolrQueryProcessor();
   $solr_predicates = array();
-  $solr_predicate_providers = module_invoke_all('islandora_iiif_parentsolr_predicate', $solr_predicates, $object);  
+  $solr_predicates = module_invoke_all('islandora_iiif_parentsolr_predicate', $object);
   // And the alter for those who like to alter.
   drupal_alter('islandora_iiif_parentsolr_predicate', $object, $solr_predicates);
  
