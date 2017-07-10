@@ -36,7 +36,7 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
 
 
     $qp->executeQuery();
-  
+    dpm($qp->islandoraSolrResult['response']);
   
     return array(
       $qp->islandoraSolrResult['response']['numFound'],
