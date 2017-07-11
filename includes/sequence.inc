@@ -94,7 +94,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   if ($canvas_list[0] == 0) {
     // IN case of no little children, we get info directly from the object
     // @TODO: revisit this logic, not happy.
-    $canvas_list =  islandora_iiif_islandora_canvas_solr_backend_callable($object);
+    $canvas_list = islandora_iiif_islandora_canvas_solr_backend_callable($object);
   }
 
   $sequence = new \stdClass;

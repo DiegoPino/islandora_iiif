@@ -142,7 +142,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     // Djatoka is terrible at resizing (quality loss) so allow 
     // for a setting to override that and resize after via imagemagick
     if ((variable_get('islandora_iiif_resizeondrupal', FALSE)) &&
-      isset($translated_params['scale'])) {
+      isset($translated_params['scale']) && ($iiif_request['size'] != "max" && $iiif_request['size'] != "full")) {
       // The idea is this:
       // If this is enabled, the right Level will be selected
       // but the final scale should happen via imagemagick just before returning.
