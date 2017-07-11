@@ -87,6 +87,10 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
           "width" => $width, 
           ), 
         "on" => $id, 
+        "otherContent" => array(
+            "@type" => "sc:AnnotationList",
+            "@embed" => false,
+          ),
       );
 
  // And to make this legit we need a sequence with some canvases
