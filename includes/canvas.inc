@@ -50,104 +50,49 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
 function islandora_iiif_canvas_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
- 
-   
-  $associations = islandora_solr_metadata_get_associations_by_cmodels($object->models);
-
-
-  $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
-
-  if (empty($separator)) {
-    $separator = "\n";
-  }
   
-  $descriptions = array();
-  $db_fields = array();
-  $solr_fields = array();
-  $metadata = array();
-  $finaldescription = '';
-  
-  foreach ($associations as $configuration_id) {
-    $field = islandora_solr_metadata_get_fields($configuration_id['configuration_id']);
-    $db_fields = array_merge($db_fields, $field);
-    $description = islandora_solr_metadata_retrieve_description($configuration_id['configuration_id']);
-    if ($description['description_field'] !== NULL) {
-      dpm($db_fields);
-      dpm( $description);
-      //$db_fields  = array_merge($db_fields, $description);
-    }
-  }
-  
-  foreach ($db_fields as $solr_field => $value) {
-    if (isset($solr_fields[$solr_field])) {
-      continue;
-    }
-    // Make an array for use later on.
-    $solr_fields[$solr_field] = $value + array(
-      'value' => array(),
-    );
-  }
-  $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
-  if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
-    foreach ($solr_fields as $key => $value) {
-      dpm($value);
-      $metadata[] = array("label" => $value['display_label'], "value" =>$value['value']);
-    }
-  }
-  
-  $manifest = new \stdClass;
-  $manifest->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
-  $manifest->{'@id'} = urldecode(url(current_path(),
+  $canvas_info = islandora_iiif_islandora_canvas_solr_backend_callable($object);
+  dpm($canvas_info);
+  $height = isset($canvas_info[0]['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info[0]['solr_doc']['RELS_INT_height_literal_s'] : '0';
+  $width = isset($canvas_info[0]['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info[0]['solr_doc']['RELS_INT_width_literal_s'] : '0';
+  $canvas = new \stdClass;
+  $canvas->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
+  $canvas->{'@id'} = urldecode(url(current_path(),
      array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
     ))
   );
-  $manifest->{'@type'} = "sc:Manifest";
   
-  $manifest->label = $object->label;
+  $id = urldecode(url("islandora_iiif/{$object->id}/canvas/default", array(
+    'absolute' => TRUE,
+    'language' => (object)array('language' => FALSE),
+    )));
   
-  
-  
-  $manifest->metadata = $metadata;
-  $manifest->description = $finaldescription;
-  // The reason i went for current_path() is because someone could 
-  // wants to serve this via an alias.
-  // The use of url() also allows for further altering via outgoing and incomming
-  // alterhooks.
-  
-  $manifest->thumbnail = array(
-    "@id" => urldecode(url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    ))
-  ),
-  "service" => array(
-    "@context" => "http://iiif.io/api/image/2/context.json",
-    "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    ))),
-    "profile" => "http://iiif.io/api/image/2/level2.json",
-  ),
-);
+  $canvas->{'@type'} = "sc:Canvas";
+  $canvas->label = $object->label;
+  $canvas->height = $height;
+  $canvas->width = $width;
+   $canvas->images = array (
+        "@type" => "oa:Annotation", 
+        "motivation" => "sc:painting", 
+        "resource" => array(
+          "@id" => urldecode(url("islandora_iiif/{$object->id}/full/max/default.jp2", array(
+            'absolute' => TRUE,
+            'language' => (object)array('language' => FALSE),
+            ))
+          ), 
+          "@type" => "dctypes:Image", 
+          "height" => $height,
+          "width" => $width, 
+          ), 
+        "on" => $id, 
+      );
 
  // And to make this legit we need a sequence with some canvases
- 
- $manifest->sequences = array(
-
-        "@id" =>"http://example.org/iiif/book1/sequence/normal",
-        "@type"  => "sc:Sequence",
-        "label" => "Current Page Order"
-        // sequence's page order should be included here, see below...
-      // Any additional sequences can be referenced here...
-    );
-
-
-
 
 drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-echo json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+echo json_encode($canvas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 drupal_page_footer();
  
 }
