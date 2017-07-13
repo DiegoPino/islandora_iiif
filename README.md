@@ -47,4 +47,4 @@ http://localhost:8000/islandora_iiif/islandora%3A1/sequence/default
 
 http://localhost:8000/islandora_iiif/islandora%3A1/canvas
 
-http://localhost:8000/islandora_iiif/islandora%3A1/collection
+http://localhost:8000/islandora_iiif/collection/islandora%3A1
