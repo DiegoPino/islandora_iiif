@@ -40,7 +40,11 @@ Also, but not lastly, it provides responses for all IIIF Presentation API 2.1 ty
 In the form of:
 
 http://localhost:8000/islandora_iiif/islandora%3A1/info.json
+
 http://localhost:8000/islandora_iiif/islandora%3A1/manifest
+
 http://localhost:8000/islandora_iiif/islandora%3A1/sequence/default
+
 http://localhost:8000/islandora_iiif/islandora%3A1/canvas
+
 http://localhost:8000/islandora_iiif/islandora%3A1/collection
