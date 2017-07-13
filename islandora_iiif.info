@@ -1,5 +1,8 @@
 name = Islandora IIIF
-description = "An IIIF solution for Vanilla islandora"
+description = "An IIIF solution for a Vanilla (skim milk) islandora"
 package = Islandora
 dependencies[] = islandora
+dependencies[] = islandora_basic_collection
+dependencies[] = islandora_solr_search
+dependencies[] = islandora_solr_metadata
 core = 7.x
