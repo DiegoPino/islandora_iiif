@@ -26,7 +26,7 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 ## Documentation
 
-This module wrapps around adore-djatoka image server and Islandora Datastream authentication/authorization translating well formed 
+This module wraps around adore-djatoka image server and Islandora Datastream authentication/authorization translating well formed 
 IIIF Image API calls internally to something that Adore understands, returning the transformed image. This allows any generic Islandora
 Installation run and serve IIIF compliant image responses without any extra backend deployment with the added benefit of Drupal 
 (and varnish if you have that!) Caching, datastream access secured via Islandora and even extra capabilities provided by image magick
