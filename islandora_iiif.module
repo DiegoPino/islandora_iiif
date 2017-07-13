@@ -44,6 +44,24 @@ function islandora_iiif_menu() {
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'load arguments' => array(1),
     ),
+    'islandora_iiif/%islandora_object/sequence/%' => array(
+      'page callback' => 'islandora_iiif_sequence_callback',
+      'page arguments' => array(1),
+      'file' => 'includes/sequence.inc',
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(1),
+    ),
+    'islandora_iiif/%islandora_object/canvas/%' => array(
+      'page callback' => 'islandora_iiif_canvas_callback',
+      'page arguments' => array(1),
+      'file' => 'includes/canvas.inc',
+      'type' => MENU_CALLBACK,
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'load arguments' => array(1),
+    ),
     'islandora_iiif/collection/%islandora_object' => array(
       'page callback' => 'islandora_iiif_collection_callback',
       'page arguments' => array(1),
@@ -124,7 +142,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     // Djatoka is terrible at resizing (quality loss) so allow 
     // for a setting to override that and resize after via imagemagick
     if ((variable_get('islandora_iiif_resizeondrupal', FALSE)) &&
-      isset($translated_params['scale'])) {
+      isset($translated_params['scale']) && ($iiif_request['size'] != "max" && $iiif_request['size'] != "full")) {
       // The idea is this:
       // If this is enabled, the right Level will be selected
       // but the final scale should happen via imagemagick just before returning.
