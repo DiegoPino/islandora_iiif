@@ -1,6 +1,6 @@
 # Islandora IIIF
 
-Our super drop-in and forget kind-of IIIF Image server URL proxying and IIIF Presentation API 2.1.x types generator for Islandora
+Our super drop-in and forget kind-of IIIF Image server URL proxying and IIIF Presentation API 2.1.x types generator for Islandora.
 This is still experimental and I (Diego Pino) don't recommend running it in production. 
 Still, it is very cool =)
 
