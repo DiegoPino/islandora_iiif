@@ -68,7 +68,20 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       $label = "";
      
       $label = $children_info['object_label'];  
-      
+      $thumb =  array(
+        "@id" => urldecode(url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+        ))),
+        "service" => array(
+          "@context" => "http://iiif.io/api/image/2/context.json",
+          "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
+            'absolute' => TRUE,
+            'language' => (object)array('language' => FALSE),
+          ))),
+          "profile" => "http://iiif.io/api/image/2/level2.json",
+        ),
+      );
       if (in_array('info:fedora/islandora:collectionCModel', $children_info['content_models'])) {
         $id = urldecode(url("islandora_iiif/collection/{$children_info['PID']}", array(
           'absolute' => TRUE,
@@ -79,6 +92,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
           "@id" => $id,
           "@type" => $type,
           "label" => $label,
+          "thumbnail" => $thumb, 
         );
       } 
       else {
@@ -91,6 +105,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
           "@id" => $id,
           "@type" => $type,
           "label" => $label,
+          "thumbnail" => $thumb, 
         );
       }
       // I now it looks weird, but API 3.o will use members and i want to respect
@@ -99,6 +114,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
         "@id" => $id,
         "@type" => $type,
         "label" => $label,
+        "thumbnail" => $thumb, 
       );;
     }
   } 
