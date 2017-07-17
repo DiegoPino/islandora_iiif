@@ -62,7 +62,8 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $total_children =  $children_list[0];
   $current_response =  $children_list[1];
   $collection_members[] = array();
-  $collection_collection[] = array();
+  $collection_manifests[] = array();
+  $collection_collections[] = array();
   $istop = variable_get('islandora_repository_pid', 'islandora:root') == $object->id;
   dpm($children_list);
   if ($children_list[0] != 0) {
@@ -77,7 +78,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
           'language' => (object)array('language' => FALSE),
           )));
         $type = "sc:Collection";
-        $collection_collection[] = array(
+        $collection_collections[] = array(
               "@id" => $id,
               "@type" => $type,
               "label" => $label,
@@ -88,7 +89,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
           'absolute' => TRUE,
           'language' => (object)array('language' => FALSE),
           )));
-          $type = "sc:Manifest";
+        $type = "sc:Manifest";
         $collection_manifests[] = array(
               "@id" => $id,
               "@type" => $type,
