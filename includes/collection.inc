@@ -115,7 +115,8 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     ))
   );
   $collection->{'@type'} = "sc:Collection";
- 
+  // Yes, this is ours.
+  $collection->viewingHint = "multi-part"; 
  
   $collection->label = $object->label;
   $next_url_str = NULL;
@@ -128,7 +129,8 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   // B. if $index + $limit is more than total, then no $next
   // C. if $index - $limit <= 0 then $prev is parent top
   // if $index = 1 then no $prev
-
+  $collection->total = (int)$total_children;
+  
   if (($total_children > $index+$limit) && ($total_children>0)) {
     $next_url_str = "islandora_iiif/collection/{$object->id}/{($index+$limit+1)}";
   }
@@ -152,7 +154,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       )))
     );
   }
-  
+  if (!$istop) {
   $collection->within = array(
     "@id" => urldecode(url("islandora_iiif/collection/{$object->id}", array(
       'absolute' => TRUE,
@@ -160,7 +162,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     ))
       )
   );
-  
+  }
   
   
   if (!empty($collection_manifests)) {
