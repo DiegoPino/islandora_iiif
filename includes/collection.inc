@@ -59,28 +59,50 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $limit = variable_get('islandora_solr_num_of_results', '20');
   
   $children_list = islandora_iiif_islandora_collection_solr_backend_callable($object, $index);
-  $total_children = $children[0];
-  $current_response = $children[1];
+  $total_children =  $children_list[0];
+  $current_response =  $children_list[1];
   $collection_members[] = array();
+  $collection_collection[] = array();
   $istop = variable_get('islandora_repository_pid', 'islandora:root') == $object->id;
   dpm($children_list);
   if ($children_list[0] != 0) {
-
-  foreach ($children_list [1] as $children_info) {
-    $label = "";
-    
-    $id = urldecode(url("islandora_iiif/{$children_info['PID']}/manifest", array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-      )));
-    $label = $children_info['object_label'];  
-        $collection_members[] = array(
-          "@id" => $id,
-          "@type" => "sc:Manifest",
-          "label" => $label,
+    foreach ($current_response as $children_info) {
+      $label = "";
+     
+      $label = $children_info['object_label'];  
+      
+      if (in_array('info:fedora/islandora:collectionCModel', $children_info['content_models'])) {
+        $id = urldecode(url("islandora_iiif/collection/{$children_info['PID']}", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+          )));
+        $type = "sc:Collection";
+        $collection_collection[] = array(
+              "@id" => $id,
+              "@type" => $type,
+              "label" => $label,
         );
- 
-  }
+      } 
+      else {
+        $id = urldecode(url("islandora_iiif/{$children_info['PID']}/manifest", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+          )));
+          $type = "sc:Manifest";
+        $collection_manifests[] = array(
+              "@id" => $id,
+              "@type" => $type,
+              "label" => $label,
+        );
+      }
+      // I now it looks weird, but API 3.o will use members and i want to respect
+      // Islandora's ordering versus what 2.1 imposes, manifest v/s collection separation.
+      $collection_members[] = array(
+              "@id" => $id,
+              "@type" => $type,
+              "label" => $label,
+            );
+    }
   } 
   
   $collection = new \stdClass;
@@ -92,7 +114,8 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     ))
   );
   $collection->{'@type'} = "sc:Collection";
-  
+ 
+ 
   $collection->label = $object->label;
   $next_url_str = NULL;
   $prev_url_str = NULL;
@@ -136,6 +159,19 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     ))
       )
   );
+  
+  
+  
+  if (!empty($collection_manifests)) {
+    $collection->manifests = $collection_manifests;
+  }
+  if (!empty($collection_collections)) {
+    $collection->collections = $collection_collections;
+  }
+  if (!empty($collection_members)) {
+    $collection->members = $collection_members;
+  }
+ 
 
 
  // And to make this legit we need a sequence with some canvases
