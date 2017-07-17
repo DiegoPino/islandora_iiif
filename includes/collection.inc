@@ -65,7 +65,6 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $collection_manifests = array();
   $collection_collections = array();
   $istop = variable_get('islandora_repository_pid', 'islandora:root') == $object->id;
-  dpm($children_list);
   if ($children_list[0] != 0) {
     foreach ($current_response as $children_info) {
       $label = "";
@@ -124,7 +123,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $next_url_str = NULL;
   $prev_url_str = NULL;
   $current_breadcrumb = drupal_get_breadcrumb();
-  dpm($current_breadcrumb);
+  
   
   // Few assumptiomns
   // A. If total results is less than $limit, then no $next,
@@ -165,10 +164,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       )
   );
   }
-  dpm($collection_manifests);
-  dpm($collection_collections);
-  dpm($collection_members);
-  
+
   if (!empty($collection_manifests)) {
     $collection->manifests = $collection_manifests;
   }
