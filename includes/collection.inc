@@ -48,10 +48,8 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
 * This is the actual collection building function
 */ 
 function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) {
-  module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
-  module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
-  module_load_include('inc', 'islandora_iiif', 'includes/sequence');
- 
+
+  module_load_include('inc', 'islandora_solr', 'includes/breadcrumbs'); 
   if (!in_array('islandora:collectionCModel', $object->models)) {
     drupal_not_found();
   }
@@ -70,48 +68,64 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       $label = "";
      
       $label = $children_info['object_label'];  
-      
+      $thumb =  array(
+        "@id" => urldecode(url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+        ))),
+        "service" => array(
+          "@context" => "http://iiif.io/api/image/2/context.json",
+          "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
+            'absolute' => TRUE,
+            'language' => (object)array('language' => FALSE),
+          ))),
+          "profile" => "http://iiif.io/api/image/2/level2.json",
+        ),
+      );
       if (in_array('info:fedora/islandora:collectionCModel', $children_info['content_models'])) {
         $id = urldecode(url("islandora_iiif/collection/{$children_info['PID']}", array(
           'absolute' => TRUE,
           'language' => (object)array('language' => FALSE),
-          )));
+        )));
         $type = "sc:Collection";
         $collection_collections[] = array(
-              "@id" => $id,
-              "@type" => $type,
-              "label" => $label,
+          "@id" => $id,
+          "@type" => $type,
+          "label" => $label,
+          "thumbnail" => $thumb, 
         );
       } 
       else {
         $id = urldecode(url("islandora_iiif/{$children_info['PID']}/manifest", array(
           'absolute' => TRUE,
           'language' => (object)array('language' => FALSE),
-          )));
+        )));
         $type = "sc:Manifest";
         $collection_manifests[] = array(
-              "@id" => $id,
-              "@type" => $type,
-              "label" => $label,
+          "@id" => $id,
+          "@type" => $type,
+          "label" => $label,
+          "thumbnail" => $thumb, 
         );
       }
       // I now it looks weird, but API 3.o will use members and i want to respect
       // Islandora's ordering versus what 2.1 imposes, manifest v/s collection separation.
       $collection_members[] = array(
-              "@id" => $id,
-              "@type" => $type,
-              "label" => $label,
-            );
+        "@id" => $id,
+        "@type" => $type,
+        "label" => $label,
+        "thumbnail" => $thumb, 
+      );
     }
   } 
-  
   $collection = new \stdClass;
   $collection->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
   $collection->{'@id'} = urldecode(url(current_path(),
-     array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    ))
+      array(
+        'absolute' => TRUE,
+        'language' => (object)array('language' => FALSE),
+      )
+    )
   );
   $collection->{'@type'} = "sc:Collection";
   // Yes, this is ours.
@@ -122,8 +136,6 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   
   $next_url_str = NULL;
   $prev_url_str = NULL;
-  $current_breadcrumb = drupal_get_breadcrumb();
-  
   
   // Few assumptiomns
   // A. If total results is less than $limit, then no $next,
@@ -135,17 +147,17 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   if (($total_children > $index+$limit) && ($total_children>0)) {
     $next_url_str = "islandora_iiif/collection/{$object->id}/{($index+$limit+1)}";
   }
-   if (($index > $limit) && ($total_children>0)) {
-     $prev_url_str = "islandora_iiif/collection/{$object->id}/{($index-$limit+1}";
+  if (($index > $limit) && ($total_children>0)) {
+    $prev_url_str = "islandora_iiif/collection/{$object->id}/{($index-$limit+1}";
   }
   
   if ($next_url_str) {
-  $collection->next = array(
-    "@id" => urldecode(url($next_url_str, array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    )))
-  );
+    $collection->next = array(
+        "@id" => urldecode(url($next_url_str, array(
+        'absolute' => TRUE,
+        'language' => (object)array('language' => FALSE),
+        )))
+    );
   }
   if ($prev_url_str) { 
     $collection->prev = array(
@@ -156,15 +168,17 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     );
   }
   if (!$istop) {
-  $collection->within = array(
-    "@id" => urldecode(url("islandora_iiif/collection/{$object->id}", array(
-      'absolute' => TRUE,
-      'language' => (object)array('language' => FALSE),
-    ))
-      )
-  );
+    $parent = islandora_solr_get_breadcrumb_parent($object->id);
+    if (!empty($parent)) {
+      $collection->within = array(
+        "@id" => urldecode(url("islandora_iiif/collection/{$parent['PID']}", array(
+          'absolute' => TRUE,
+          'language' => (object)array('language' => FALSE),
+        ))
+          )
+      );
+    }
   }
-
   if (!empty($collection_manifests)) {
     $collection->manifests = $collection_manifests;
   }
@@ -177,10 +191,10 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
  
 
 
- // And to make this legit we need a sequence with some canvases
+  // And to make this legit we need a sequence with some canvases
 
-drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-drupal_page_footer();
+  drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
+  echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  drupal_page_footer();
  
 }

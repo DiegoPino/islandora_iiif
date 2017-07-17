@@ -129,8 +129,8 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
       'language' => (object)array('language' => FALSE),
     ))),
     "profile" => "http://iiif.io/api/image/2/level2.json",
-  ),
-);
+    ),
+  );
 
  // And to make this legit we need a sequence with some canvases
  
