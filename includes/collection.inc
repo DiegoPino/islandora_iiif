@@ -30,7 +30,9 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
   $qp->solrStart = $index;
   $qp->solrLimit = $limit;
 
-  $qp->solrParams['sort'] = $qp->internalSolrParams['sort'];
+  if ($qp->internalSolrParams['sort']) {
+    $qp->solrParams['sort'] = $qp->internalSolrParams['sort']; 
+  }
 
   $qp->executeQuery();
 
@@ -61,11 +63,13 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $current_response = $children[1];
   $collection_members[] = array();
   $istop = variable_get('islandora_repository_pid', 'islandora:root') == $object->id;
+  dpm($children_list);
   if ($children_list[0] != 0) {
 
   foreach ($children_list [1] as $children_info) {
     $label = "";
-    $id = urldecode(url("islandora_iiif/{$canvas_info['PID']}/manifest", array(
+    
+    $id = urldecode(url("islandora_iiif/{$children_info['PID']}/manifest", array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
       )));
