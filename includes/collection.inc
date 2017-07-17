@@ -50,6 +50,10 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
   module_load_include('inc', 'islandora_iiif', 'includes/sequence');
  
+  if (!in_array('islandora:collectionCModel', $object->models)) {
+    drupal_not_found();
+  }
+ 
   $limit = variable_get('islandora_solr_num_of_results', '20');
   
   $children_list = islandora_iiif_islandora_collection_solr_backend_callable($object, $index);

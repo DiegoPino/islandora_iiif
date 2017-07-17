@@ -67,7 +67,7 @@ function islandora_iiif_menu() {
       'file' => 'includes/collection.inc',
       'page arguments' => array(2),
       'type' => MENU_CALLBACK,
-      'access callback' => 'islandora_iiif_collection_object_access',
+      'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
       'load arguments' => array(2),
     ),
@@ -76,7 +76,7 @@ function islandora_iiif_menu() {
       'file' => 'includes/collection.inc',
       'page arguments' => array(2,3),
       'type' => MENU_CALLBACK,
-      'access callback' => 'islandora_iiif_collection_object_access',
+      'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
       'load arguments' => array(2),
     ),
@@ -104,7 +104,6 @@ function islandora_iiif_rootcollection_access($op, $object, $user = NULL) {
   }
   return false;
 }
-
 
 /**
 * Our Proxied callback handler()
