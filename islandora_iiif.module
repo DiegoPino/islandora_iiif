@@ -62,6 +62,12 @@ function islandora_iiif_menu() {
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'load arguments' => array(1),
     ),
+    'islandora_iiif/collection/top' => array(
+      'page callback' => 'islandora_iiif_collection_callback',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+      'access callback' => TRUE,
+    ),
     'islandora_iiif/collection/%islandora_object' => array(
       'page callback' => 'islandora_iiif_collection_callback',
       'page arguments' => array(1),
@@ -69,13 +75,6 @@ function islandora_iiif_menu() {
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'load arguments' => array(2),
-    ),
-    'islandora_iiif/collection/top' => array(
-      'page callback' => 'islandora_iiif_collection_callback',
-      'page arguments' => array(1),
-      'type' => MENU_CALLBACK,
-      'access callback' => 'islandora_iiif_rootcollection_access',
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
     ),
     'admin/islandora/tools/internet_iiif_admin' => array(
       'title' => 'IIIF Module configuration',
