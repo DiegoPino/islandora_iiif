@@ -110,7 +110,8 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   $sequence->label = "Normal";
   $canvases = array();
   foreach ($canvas_list[1] as $canvas_info) {
-    dpm($canvas_info);
+     $label = $canvas_info['object_label'];  
+    
     $id = urldecode(url("islandora_iiif/{$canvas_info['PID']}/canvas/default", array(
       'absolute' => TRUE,
       'language' => (object)array('language' => FALSE),
@@ -120,7 +121,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
     $canvases[] = array(
       "@id" => $id , 
       "@type" => "sc:Canvas", 
-      "label" => "Label", 
+      "label" => $label , 
       "height" => $height, 
       "width" => $width, 
       "images" => array (

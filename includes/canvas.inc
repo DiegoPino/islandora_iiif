@@ -36,8 +36,6 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
 
 
     $qp->executeQuery();
-    dpm($qp->islandoraSolrResult['response']);
-  
     return array(
       $qp->islandoraSolrResult['response']['numFound'],
       $qp->islandoraSolrResult['response']['objects'],
@@ -52,7 +50,6 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
   
   $canvas_info = islandora_iiif_islandora_canvas_solr_backend_callable($object);
-  dpm($canvas_info);
   $height = isset($canvas_info[0]['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info[0]['solr_doc']['RELS_INT_height_literal_s'] : '0';
   $width = isset($canvas_info[0]['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info[0]['solr_doc']['RELS_INT_width_literal_s'] : '0';
   $canvas = new \stdClass;
