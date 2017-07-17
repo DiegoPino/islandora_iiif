@@ -115,7 +115,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
         "@type" => $type,
         "label" => $label,
         "thumbnail" => $thumb, 
-      );;
+      );
     }
   } 
   $collection = new \stdClass;
