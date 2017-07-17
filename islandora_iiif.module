@@ -73,7 +73,7 @@ function islandora_iiif_menu() {
       'page arguments' => array(1),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
       'load arguments' => array(2),
     ),
     'admin/islandora/tools/internet_iiif_admin' => array(
