@@ -64,18 +64,21 @@ function islandora_iiif_menu() {
     ),
     'islandora_iiif/collection/%islandora_object' => array(
       'page callback' => 'islandora_iiif_collection_callback',
-      'page arguments' => array(1),
+      'file' => 'includes/collection.inc',
+      'page arguments' => array(2),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
       'load arguments' => array(2),
     ),
-    'islandora_iiif/collection/top' => array(
+    'islandora_iiif/collection/%islandora_object/%' => array(
       'page callback' => 'islandora_iiif_collection_callback',
-      'page arguments' => array(1),
+      'file' => 'includes/collection.inc',
+      'page arguments' => array(2,3),
       'type' => MENU_CALLBACK,
-      'access callback' => 'islandora_iiif_rootcollection_access',
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
+      'load arguments' => array(2),
     ),
     'admin/islandora/tools/internet_iiif_admin' => array(
       'title' => 'IIIF Module configuration',
@@ -92,13 +95,15 @@ function islandora_iiif_menu() {
 function islandora_iiif_rootcollection_access($op, $object, $user = NULL) {
   // get root as we have it configured globally. We can always get 
   // islandora:root directly via the PID specific collection manifest
+  
+  
+  
   $root_pid = variable_get('islandora_repository_pid', 'islandora:root');
   if ($object = islandora_object_load($root_pid)) {
     return islandora_object_access($op, $object, $user);
   }
   return false;
 }
-
 
 /**
 * Our Proxied callback handler()
