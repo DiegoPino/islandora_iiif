@@ -49,7 +49,7 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
 */ 
 function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) {
 
-  module_load_include('inc', 'islandora_solr_search', 'includes/breadcrumb'); 
+  module_load_include('inc', 'islandora_solr', 'includes/breadcrumb'); 
   if (!in_array('islandora:collectionCModel', $object->models)) {
     drupal_not_found();
   }
