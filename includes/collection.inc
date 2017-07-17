@@ -119,6 +119,8 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   $collection->viewingHint = "multi-part"; 
  
   $collection->label = $object->label;
+  $collection->startIndex = $index;
+  
   $next_url_str = NULL;
   $prev_url_str = NULL;
   $current_breadcrumb = drupal_get_breadcrumb();
@@ -163,7 +165,9 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       )
   );
   }
-  
+  dpm($collection_manifests);
+  dpm($collection_collections);
+  dpm($collection_members);
   
   if (!empty($collection_manifests)) {
     $collection->manifests = $collection_manifests;
