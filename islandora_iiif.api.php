@@ -29,7 +29,8 @@ function hook_islandora_iiif_collection_query_backends() {
     // Do something to get the total number of objects and this page return
     // them.
     $iiif = array('islandora:1' => 'Object one', 'islandora:2' => 'Second object');
-    $total = count($iiif); // could be more of course
+    // Could be more of course.
+    $total = count($iiif);
     return array($total, $iiif);
   };
   return array(
@@ -57,7 +58,6 @@ function hook_islandora_iiif_collection_query_backends() {
  *   - An integer representing the total number of objects in the collection.
  *   - An associative array containing up to $limit strings with keys containing object PIDs
  *     belonging to the given collection and label as value.
- *     
  */
 function callback_iiif_collection_query_backends(AbstractObject $object, $page, $limit) {
   // Do something to get the total number of objects and this page return
@@ -85,7 +85,8 @@ function hook_islandora_iiif_manifest_query_backends() {
     // Do something to get the total number of objects and this page return
     // them.
     $iiif = array('islandora:1' => 'Object one', 'islandora:2' => 'Second object');
-    $total = count($iiif); // could be more of course
+    // Could be more of course.
+    $total = count($iiif);
     return array($total, $iiif);
   };
   return array(
@@ -113,7 +114,6 @@ function hook_islandora_iiif_manifest_query_backends() {
  *   - An integer representing the total number of objects in the collection.
  *   - An associative array containing up to $limit strings with keys containing object PIDs
  *     belonging to the given collection and label as value.
- *     
  */
 function callback_iiif_manifest_query_backends(AbstractObject $object, $page, $limit) {
   // Do something to get the total number of objects and this page return
