@@ -1,10 +1,9 @@
 <?php
 
 /**
-* @file
-* Main module file for islandora iiif.
-*/
-
+ * @file
+ * Main module file for islandora iiif.
+ */
 
 /**
  * Implements hook_init().
@@ -13,15 +12,14 @@ function islandora_iiif_init() {
   require_once __DIR__ . "/vendor/autoload.php";
 }
 
-
 /**
-* Implements hook_menu().
-*/
+ * Implements hook_menu().
+ */
 function islandora_iiif_menu() {
   return array(
     'islandora_iiif/%islandora_object/%/%/%/%' => array(
       'page callback' => 'islandora_iiif_proxied_image_response',
-      'page arguments' => array(1,2,3,4,5),
+      'page arguments' => array(1, 2, 3, 4, 5),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
@@ -74,7 +72,7 @@ function islandora_iiif_menu() {
     'islandora_iiif/collection/%islandora_object/%' => array(
       'page callback' => 'islandora_iiif_collection_callback',
       'file' => 'includes/collection.inc',
-      'page arguments' => array(2,3),
+      'page arguments' => array(2, 3),
       'type' => MENU_CALLBACK,
       'access callback' => 'islandora_object_access',
       'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
@@ -92,66 +90,64 @@ function islandora_iiif_menu() {
   );
 }
 
+/**
+ *
+ */
 function islandora_iiif_rootcollection_access($op, $object, $user = NULL) {
-  // get root as we have it configured globally. We can always get 
-  // islandora:root directly via the PID specific collection manifest
-  
-  
-  
+  // Get root as we have it configured globally. We can always get
+  // islandora:root directly via the PID specific collection manifest.
   $root_pid = variable_get('islandora_repository_pid', 'islandora:root');
   if ($object = islandora_object_load($root_pid)) {
     return islandora_object_access($op, $object, $user);
   }
-  return false;
+  return FALSE;
 }
 
 /**
-* Our Proxied callback handler()
-*/
+ * Our Proxied callback handler()
+ */
 function islandora_iiif_proxied_image_response(AbstractObject $object, $region, $size, $rotation = 0, $qualityandformat = "default.jp2") {
   global $base_root;
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   $allowedExtensions = array('png', 'jpg', 'jp2');
   $qualityandformatparsed = islandora_iiif_safefile($qualityandformat, $allowedExtensions);
-  //@TODO implement a hook here to allow per CMODEL backend \
+  // @TODO implement a hook here to allow per CMODEL backend \
   // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
-
   $iiif_request = array(
     "pid" => $object->id,
     "region" => $region,
-    "size" => $size, 
+    "size" => $size,
     "rotation" => $rotation,
     "quality" => $qualityandformatparsed[0],
-    "format" => $qualityandformatparsed[1]
+    "format" => $qualityandformatparsed[1],
   );
-  
 
   module_load_include('inc', 'islandora', 'includes/authtokens');
   $uri_params = array(
     'absolute' => TRUE,
-    'query' => array( 
+    'query' => array(
       'token' => islandora_get_object_token($object->id, "OBJ", 2),
     ),
   );
   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
-  //dpm($iiif_request);
-  //dpm($metadata_response);
-  $theresponsecode = (int)$metadata_response->code;
-  //dpm($theresponsecode);
+  // dpm($iiif_request);
+  // dpm($metadata_response);
+  $theresponsecode = (int) $metadata_response->code;
+  // dpm($theresponsecode);
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
-    $translated_params = islandora_iiif_djatoka_region(json_decode($metadata_response->data, true), $iiif_request);
+    $translated_params = islandora_iiif_djatoka_region(json_decode($metadata_response->data, TRUE), $iiif_request);
     drupal_add_http_header('Content-Type', 'image/jp2');
-    //@TODO hookify this so others can alter the canonical 
-    drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jp2>;rel="canonical"');
+    // @TODO hookify this so others can alter the canonical
+    drupal_add_http_header('Link', '<' . $base_root . 'islandora_iiif/' . urlencode($object->id) . 'full/max/0/default.jp2>;rel="canonical"');
     $djatoka_url = islandora_iiif_djatoka_image_request_url($object->id, $translated_params);
-    // Djatoka is terrible at resizing (quality loss) so allow 
-    // for a setting to override that and resize after via imagemagick
+    // Djatoka is terrible at resizing (quality loss) so allow
+    // for a setting to override that and resize after via imagemagick.
     if ((variable_get('islandora_iiif_resizeondrupal', FALSE)) &&
       isset($translated_params['scale']) && ($iiif_request['size'] != "max" && $iiif_request['size'] != "full")) {
       // The idea is this:
       // If this is enabled, the right Level will be selected
       // but the final scale should happen via imagemagick just before returning.
-      // That should lead to a compromise situation: a bit slower than asking 
+      // That should lead to a compromise situation: a bit slower than asking
       // Adored directly, but since level should be close to final, imagemagick
       // overhead will be not that wrong and mostly and better quality.
       $theimage = drupal_http_request($djatoka_url);
@@ -159,24 +155,28 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
 
       $imagick->readImageBlob($theimage->data);
       $imagick->setImageFormat('jp2');
-      $scale = explode(",",$translated_params['scale']);
+      $scale = explode(",", $translated_params['scale']);
 
-      // make every empty string a 0
-      $scale = array_map(function($val) { if (empty(trim($val))){$val = 0;} return $val;}, $scale);
+      // Make every empty string a 0.
+      $scale = array_map(function ($val) {
+        if (empty(trim($val))) {
+          $val = 0;
+        } return $val;
+      }, $scale);
 
       if (count($scale) == 1) {
         $scale[] = 0;
       }
-     
+
       $imagick->scaleImage($scale[0], $scale[1]);
-      print  $imagick->getImageBlob();
+      print $imagick->getImageBlob();
 
     }
     else {
       $theimage = drupal_http_request($djatoka_url);
       print $theimage->data;
     }
-    
+
   }
   else {
     drupal_add_http_header('Status', '404 Not Found');
@@ -185,71 +185,26 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
 }
 
 /**
-* Our Proxied callback handler()
-*/
+ * Our Proxied callback handler()
+ */
 function islandora_iiif_proxied_info_response(AbstractObject $object) {
   module_load_include('inc', 'islandora_iiif', 'includes/utils');
   global $base_root;
 
-  //@TODO implement a hook here to allow per CMODEL/Context backend.
-  //$hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
+  // @TODO implement a hook here to allow per CMODEL/Context backend.
+  // $hooks = islandora_build_hook_list(ISLANDORA_IMAGESERVER_HOOK, $object->models);
   $metadata_response = islandora_iiif_djatoka_metadata_request($object->id);
-  
-  $theresponsecode = (int)$metadata_response->code;
+
+  $theresponsecode = (int) $metadata_response->code;
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
     drupal_add_http_header('Content-Type', 'application/json');
-    //@TODO hookify this so others can alter the canonical 
-    drupal_add_http_header('Link', '<'.$base_root.'islandora_iiif/'.urlencode($object->id).'full/max/0/default.jp2>;rel="canonical"');
-      
-    $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, true));
+    // @TODO hookify this so others can alter the canonical
+    drupal_add_http_header('Link', '<' . $base_root . 'islandora_iiif/' . urlencode($object->id) . 'full/max/0/default.jp2>;rel="canonical"');
+
+    $info = islandora_iiif_adoredjatoka_info_json(json_decode($metadata_response->data, TRUE));
     print json_encode($info, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-  } 
+  }
   else {
     drupal_add_http_header('Status', '404 Not Found');
-  }
-}
-
-function islandora_iiif_file_url_alter(&$uri) {
-  global $user;
-
-  // User 1 will always see the local file in this example.
-  if ($user->uid == 1) {
-    return;
-  }
- 
-  $cdn1 = 'http://cdn1.example.com';
-  $cdn2 = 'http://cdn2.example.com';
-  $cdn_extensions = array('css', 'js', 'gif', 'jpg', 'jpeg', 'png');
-
-  // Most CDNs don't support private file transfers without a lot of hassle,
-  // so don't support this in the common case.
-  $schemes = array('public');
-
-  $scheme = file_uri_scheme($uri);
-
-  // Only serve shipped files and public created files from the CDN.
-  if (!$scheme || in_array($scheme, $schemes)) {
-    // Shipped files.
-    if (!$scheme) {
-      $path = $uri;
-    }
-    // Public created files.
-    else {
-      $wrapper = file_stream_wrapper_get_instance_by_scheme($scheme);
-      $path = $wrapper->getDirectoryPath() . '/' . file_uri_target($uri);
-    }
-
-    // Clean up Windows paths.
-    $path = str_replace('\\', '/', $path);
-
-    // Serve files with one of the CDN extensions from CDN 1, all others from
-    // CDN 2.
-    $pathinfo = pathinfo($path);
-    if (isset($pathinfo['extension']) && in_array($pathinfo['extension'], $cdn_extensions)) {
-      $uri = $cdn1 . '/' . $path;
-    }
-    else {
-      $uri = $cdn2 . '/' . $path;
-    }
   }
 }

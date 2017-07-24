@@ -1,7 +1,12 @@
 <?php
+
 /**
-* Implements hook_islandora_iiif_collection_query_backends().
-*/
+ * @file
+ */
+
+/**
+ * Implements hook_islandora_iiif_collection_query_backends().
+ */
 function islandora_iiif_islandora_iiif_collection_query_backends() {
   $module_path = drupal_get_path('module', 'islandora_solr');
   return array(
@@ -12,9 +17,10 @@ function islandora_iiif_islandora_iiif_collection_query_backends() {
     ),
   );
 }
+
 /**
-* Implements callback_islandora_iiif_collection_query_backends()
-*/
+ * Implements callback_islandora_iiif_collection_query_backends()
+ */
 function islandora_iiif_islandora_collection_solr_backend_callable($object, $index) {
   module_load_include('inc', 'islandora_solr', 'includes/db');
   $qp = new IslandoraSolrQueryProcessor();
@@ -31,7 +37,7 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
   $qp->solrLimit = $limit;
 
   if (isset($qp->internalSolrParams['sort'])) {
-    $qp->solrParams['sort'] = $qp->internalSolrParams['sort']; 
+    $qp->solrParams['sort'] = $qp->internalSolrParams['sort'];
   }
 
   $qp->executeQuery();
@@ -43,22 +49,22 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
     $qp->islandoraSolrResult['response']['objects'],
   );
 };
-  
+
 /**
-* This is the actual collection building function
-*/ 
+ * This is the actual collection building function.
+ */
 function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) {
 
-  module_load_include('inc', 'islandora_solr', 'includes/breadcrumbs'); 
+  module_load_include('inc', 'islandora_solr', 'includes/breadcrumbs');
   if (!in_array('islandora:collectionCModel', $object->models)) {
     drupal_not_found();
   }
- 
+
   $limit = variable_get('islandora_solr_num_of_results', '20');
-  
+
   $children_list = islandora_iiif_islandora_collection_solr_backend_callable($object, $index);
-  $total_children =  $children_list[0];
-  $current_response =  $children_list[1];
+  $total_children = $children_list[0];
+  $current_response = $children_list[1];
   $collection_members = array();
   $collection_manifests = array();
   $collection_collections = array();
@@ -66,18 +72,18 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   if ($children_list[0] != 0) {
     foreach ($current_response as $children_info) {
       $label = "";
-     
-      $label = $children_info['object_label'];  
-      $thumb =  array(
+
+      $label = $children_info['object_label'];
+      $thumb = array(
         "@id" => urldecode(url("islandora_iiif/{$object->id}/full/50,/0/default.jp2", array(
           'absolute' => TRUE,
-          'language' => (object)array('language' => FALSE),
+          'language' => (object) array('language' => FALSE),
         ))),
         "service" => array(
           "@context" => "http://iiif.io/api/image/2/context.json",
           "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
             'absolute' => TRUE,
-            'language' => (object)array('language' => FALSE),
+            'language' => (object) array('language' => FALSE),
           ))),
           "profile" => "http://iiif.io/api/image/2/level2.json",
         ),
@@ -85,27 +91,27 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       if (in_array('info:fedora/islandora:collectionCModel', $children_info['content_models'])) {
         $id = urldecode(url("islandora_iiif/collection/{$children_info['PID']}", array(
           'absolute' => TRUE,
-          'language' => (object)array('language' => FALSE),
+          'language' => (object) array('language' => FALSE),
         )));
         $type = "sc:Collection";
         $collection_collections[] = array(
           "@id" => $id,
           "@type" => $type,
           "label" => $label,
-          "thumbnail" => $thumb, 
+          "thumbnail" => $thumb,
         );
-      } 
+      }
       else {
         $id = urldecode(url("islandora_iiif/{$children_info['PID']}/manifest", array(
           'absolute' => TRUE,
-          'language' => (object)array('language' => FALSE),
+          'language' => (object) array('language' => FALSE),
         )));
         $type = "sc:Manifest";
         $collection_manifests[] = array(
           "@id" => $id,
           "@type" => $type,
           "label" => $label,
-          "thumbnail" => $thumb, 
+          "thumbnail" => $thumb,
         );
       }
       // I now it looks weird, but API 3.o will use members and i want to respect
@@ -114,57 +120,57 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
         "@id" => $id,
         "@type" => $type,
         "label" => $label,
-        "thumbnail" => $thumb, 
+        "thumbnail" => $thumb,
       );
     }
-  } 
-  $collection = new \stdClass;
+  }
+  $collection = new \stdClass();
   $collection->{'@context'} = "http://iiif.io/api/presentation/2/context.json";
   $collection->{'@id'} = urldecode(url(current_path(),
       array(
         'absolute' => TRUE,
-        'language' => (object)array('language' => FALSE),
+        'language' => (object) array('language' => FALSE),
       )
     )
   );
   $collection->{'@type'} = "sc:Collection";
   // Yes, this is ours.
-  $collection->viewingHint = "multi-part"; 
- 
+  $collection->viewingHint = "multi-part";
+
   $collection->label = $object->label;
   $collection->startIndex = $index;
-  
+
   $next_url_str = NULL;
   $prev_url_str = NULL;
-  
+
   // Few assumptiomns
   // A. If total results is less than $limit, then no $next,
   // B. if $index + $limit is more than total, then no $next
   // C. if $index - $limit <= 0 then $prev is parent top
-  // if $index = 1 then no $prev
-  $collection->total = (int)$total_children;
-  
-  if (($total_children > $index+$limit) && ($total_children>0)) {
+  // if $index = 1 then no $prev.
+  $collection->total = (int) $total_children;
+
+  if (($total_children > $index + $limit) && ($total_children > 0)) {
     $next_url_str = "islandora_iiif/collection/{$object->id}/{($index+$limit+1)}";
   }
-  if (($index > $limit) && ($total_children>0)) {
+  if (($index > $limit) && ($total_children > 0)) {
     $prev_url_str = "islandora_iiif/collection/{$object->id}/{($index-$limit+1}";
   }
-  
+
   if ($next_url_str) {
     $collection->next = array(
-        "@id" => urldecode(url($next_url_str, array(
+      "@id" => urldecode(url($next_url_str, array(
         'absolute' => TRUE,
-        'language' => (object)array('language' => FALSE),
-        )))
+        'language' => (object) array('language' => FALSE),
+      ))),
     );
   }
-  if ($prev_url_str) { 
+  if ($prev_url_str) {
     $collection->prev = array(
       "@id" => urldecode(url($prev_url_str, array(
         'absolute' => TRUE,
-        'language' => (object)array('language' => FALSE),
-      )))
+        'language' => (object) array('language' => FALSE),
+      ))),
     );
   }
   if (!$istop) {
@@ -173,9 +179,9 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
       $collection->within = array(
         "@id" => urldecode(url("islandora_iiif/collection/{$parent['PID']}", array(
           'absolute' => TRUE,
-          'language' => (object)array('language' => FALSE),
+          'language' => (object) array('language' => FALSE),
         ))
-          )
+        ),
       );
     }
   }
@@ -188,13 +194,10 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
   if (!empty($collection_members)) {
     $collection->members = $collection_members;
   }
- 
 
-
-  // And to make this legit we need a sequence with some canvases
-
+  // And to make this legit we need a sequence with some canvases.
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
   echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
   drupal_page_footer();
- 
+
 }
