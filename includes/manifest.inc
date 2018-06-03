@@ -79,6 +79,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
       //dpm($db_fields);
       //dpm($description);
       // $db_fields  = array_merge($db_fields, $description);.
+      $finaldescription = $description['description_field'];
     }
   }
 
