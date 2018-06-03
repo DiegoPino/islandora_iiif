@@ -95,7 +95,7 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
 
   // And to make this legit we need a sequence with some canvases.
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  echo json_encode($canvas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  echo json_encode($canvas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
 }
