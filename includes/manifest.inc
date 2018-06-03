@@ -76,8 +76,8 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
     $db_fields = array_merge($db_fields, $field);
     $description = islandora_solr_metadata_retrieve_description($configuration_id['configuration_id']);
     if ($description['description_field'] !== NULL) {
-      dpm($db_fields);
-      dpm($description);
+      //dpm($db_fields);
+      //dpm($description);
       // $db_fields  = array_merge($db_fields, $description);.
     }
   }
@@ -94,7 +94,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   $separator = variable_get('islandora_solr_metadata_field_value_separator', "\n");
   if (islandora_solr_metadata_query_fields($object, $solr_fields)) {
     foreach ($solr_fields as $key => $value) {
-      dpm($value);
+      //dpm($value);
       $metadata[] = array("label" => $value['display_label'], "value" => $value['value']);
     }
   }

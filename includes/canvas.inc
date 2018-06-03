@@ -37,7 +37,7 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
 
   // We should have a default sort here for sequences.
   $qp->executeQuery(FALSE);
-  dpm($qp->islandoraSolrResult['response']);
+  // dpm($qp->islandoraSolrResult['response']);
   return array(
     $qp->islandoraSolrResult['response']['numFound'],
     $qp->islandoraSolrResult['response']['objects'],

@@ -42,7 +42,7 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
 
   $qp->executeQuery();
 
-  dpm($qp->islandoraSolrResult['response']);
+  // dpm($qp->islandoraSolrResult['response']);
 
   return array(
     $qp->islandoraSolrResult['response']['numFound'],
