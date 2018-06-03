@@ -72,22 +72,24 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
   $canvas->height = $height;
   $canvas->width = $width;
   $canvas->images = array(
-    "@type" => "oa:Annotation",
-    "motivation" => "sc:painting",
-    "resource" => array(
-      "@id" => urldecode(url("islandora_iiif/{$object->id}/full/max/default.jp2", array(
-        'absolute' => TRUE,
-        'language' => (object) array('language' => FALSE),
-      ))
+    array(
+      "@type" => "oa:Annotation",
+      "motivation" => "sc:painting",
+      "resource" => array(
+        "@id" => urldecode(url("islandora_iiif/{$object->id}/full/max/default.jp2", array(
+          'absolute' => TRUE,
+          'language' => (object) array('language' => FALSE),
+        ))
+        ),
+        "@type" => "dctypes:Image",
+        "height" => $height,
+        "width" => $width,
       ),
-      "@type" => "dctypes:Image",
-      "height" => $height,
-      "width" => $width,
-    ),
     "on" => $id,
-    "otherContent" => array(
-      "@type" => "sc:AnnotationList",
-      "@embed" => FALSE,
+      "otherContent" => array(
+        "@type" => "sc:AnnotationList",
+        "@embed" => FALSE,
+      ),
     ),
   );
 
