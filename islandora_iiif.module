@@ -200,6 +200,8 @@ function islandora_iiif_proxied_info_response(AbstractObject $object) {
   $theresponsecode = (int) $metadata_response->code;
   if ($theresponsecode >= 200 && $theresponsecode < 400) {
     drupal_add_http_header('Content-Type', 'application/json');
+    drupal_add_http_header('access-control-allow-origin', '*');
+    
     // @TODO hookify this so others can alter the canonical
     drupal_add_http_header('Link', '<' . $base_root . 'islandora_iiif/' . urlencode($object->id) . 'full/max/0/default.jp2>;rel="canonical"');
 
