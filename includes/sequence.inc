@@ -121,19 +121,21 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
       "height" => $height,
       "width" => $width,
       "images" => array(
-        "@type" => "oa:Annotation",
-        "motivation" => "sc:painting",
-        "resource" => array(
+        array(
+          "@type" => "oa:Annotation",
+          "motivation" => "sc:painting",
+          "resource" => array(
           "@id" => urldecode(url("islandora_iiif/{$canvas_info['PID']}/full/max/default.jp2", array(
             'absolute' => TRUE,
             'language' => (object) array('language' => FALSE),
-          ))
+            ))
+            ),
+            "@type" => "dctypes:Image",
+            "height" => $height,
+            "width" => $width,
           ),
-          "@type" => "dctypes:Image",
-          "height" => $height,
-          "width" => $width,
+          "on" => $id,
         ),
-        "on" => $id,
       ),
     );
   }
@@ -141,7 +143,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   // And to make this legit we need a sequence with some canvases.
   $sequence->canvases = $canvases;
 
-  return $sequence;
+  return array($sequence);
 }
 
 /**
@@ -150,7 +152,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
 function islandora_iiif_sequence_callback(AbstractObject $object) {
   $sequence = islandora_iiif_sequence_generator($object);
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  echo json_encode($sequence, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  echo json_encode($sequence, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
 }

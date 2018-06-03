@@ -134,10 +134,10 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   );
 
   // And to make this legit we need a sequence with some canvases.
-  $manifest->sequences = islandora_iiif_sequence_generator($object);
+  $manifest->sequences = array(islandora_iiif_sequence_generator($object));
 
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  echo json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  echo json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
 }
