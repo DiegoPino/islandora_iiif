@@ -159,6 +159,8 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
 function islandora_iiif_sequence_callback(AbstractObject $object) {
   $sequence = islandora_iiif_sequence_generator($object);
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
+  
+  drupal_add_http_header('access-control-allow-origin', '*');
   echo json_encode($sequence, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 

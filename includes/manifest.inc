@@ -138,6 +138,7 @@ function islandora_iiif_manifest_callback(AbstractObject $object) {
   $manifest->sequences = array(islandora_iiif_sequence_generator($object));
 
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
+  drupal_add_http_header('access-control-allow-origin', '*');
   echo json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
