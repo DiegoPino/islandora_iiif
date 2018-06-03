@@ -139,6 +139,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
     drupal_add_http_header('Content-Type', 'image/jp2');
     // @TODO hookify this so others can alter the canonical
     drupal_add_http_header('Link', '<' . $base_root . 'islandora_iiif/' . urlencode($object->id) . 'full/max/0/default.jp2>;rel="canonical"');
+    drupal_add_http_header('access-control-allow-origin', '*');
     $djatoka_url = islandora_iiif_djatoka_image_request_url($object->id, $translated_params);
     // Djatoka is terrible at resizing (quality loss) so allow
     // for a setting to override that and resize after via imagemagick.
@@ -181,6 +182,7 @@ function islandora_iiif_proxied_image_response(AbstractObject $object, $region, 
   else {
     drupal_add_http_header('Status', '404 Not Found');
   }
+  
   drupal_page_footer();
 }
 
