@@ -155,7 +155,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
     $next_url_str = "islandora_iiif/collection/{$object->id}/{$nextid}";
   }
   if (($index > $limit) && ($total_children > 0)) {
-    $nextid = ($index-$limit+1):
+    $nextid = ($index-$limit+1);
     $prev_url_str = "islandora_iiif/collection/{$object->id}/{$nextid}";
   }
 
