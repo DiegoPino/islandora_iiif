@@ -40,7 +40,7 @@ function islandora_iiif_islandora_collection_solr_backend_callable($object, $ind
     $qp->solrParams['sort'] = $qp->internalSolrParams['sort'];
   }
 
-  $qp->executeQuery();
+  $qp->executeQuery(FALSE);
 
   // dpm($qp->islandoraSolrResult['response']);
 
@@ -197,7 +197,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
 
   // And to make this legit we need a sequence with some canvases.
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
 }
