@@ -112,8 +112,14 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
       'absolute' => TRUE,
       'language' => (object) array('language' => FALSE),
     )));
-    $height = isset($canvas_info['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_height_literal_s'] : '0';
-    $width = isset($canvas_info['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_width_literal_s'] : '0';
+    $intwidth = isset($canvas_info['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_width_literal_s'] : 640;
+    $intheight = isset($canvas_info['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_height_literal_s'] : 480;
+    $fitswidth = isset($canvas_info['solr_doc']['fits_metadata_image_imageWidth_ms']) ? $canvas_info['solr_doc']['fits_metadata_image_imageWidth_ms'] : 640 ; 
+    $fitsheight = isset($canvas_info['solr_doc']['fits_metadata_image_imageHeight_ms']) ? $canvas_info['solr_doc']['fits_metadata_image_imageHeight_ms'] : 480 ; 
+    $height = max($intheight, $fitsheight);
+    $width = max($intwidth ,  $fitswidth);
+   
+    
     $canvases[] = array(
       "@id" => $id ,
       "@type" => "sc:Canvas",
