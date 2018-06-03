@@ -72,28 +72,30 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
   $canvas->height = $height;
   $canvas->width = $width;
   $canvas->images = array(
-    "@type" => "oa:Annotation",
-    "motivation" => "sc:painting",
-    "resource" => array(
-      "@id" => urldecode(url("islandora_iiif/{$object->id}/full/max/default.jp2", array(
-        'absolute' => TRUE,
-        'language' => (object) array('language' => FALSE),
-      ))
+    array(
+      "@type" => "oa:Annotation",
+      "motivation" => "sc:painting",
+      "resource" => array(
+        "@id" => urldecode(url("islandora_iiif/{$object->id}/full/max/default.jp2", array(
+          'absolute' => TRUE,
+          'language' => (object) array('language' => FALSE),
+        ))
+        ),
+        "@type" => "dctypes:Image",
+        "height" => $height,
+        "width" => $width,
       ),
-      "@type" => "dctypes:Image",
-      "height" => $height,
-      "width" => $width,
-    ),
     "on" => $id,
-    "otherContent" => array(
-      "@type" => "sc:AnnotationList",
-      "@embed" => FALSE,
+      "otherContent" => array(
+        "@type" => "sc:AnnotationList",
+        "@embed" => FALSE,
+      ),
     ),
   );
 
   // And to make this legit we need a sequence with some canvases.
   drupal_add_http_header('Content-Type', 'application/json; charset=utf-8');
-  echo json_encode($canvas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  echo json_encode($canvas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
   drupal_page_footer();
 
 }

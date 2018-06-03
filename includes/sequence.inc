@@ -143,7 +143,7 @@ function islandora_iiif_sequence_generator(AbstractObject $object) {
   // And to make this legit we need a sequence with some canvases.
   $sequence->canvases = $canvases;
 
-  return array($sequence);
+  return $sequence;
 }
 
 /**
