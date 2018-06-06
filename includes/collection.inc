@@ -81,7 +81,7 @@ function islandora_iiif_collection_callback(AbstractObject $object, $index = 1) 
         ))),
         "service" => array(
           "@context" => "http://iiif.io/api/image/2/context.json",
-          "@id" => urldecode(url("islandora_iiif/{$object->id}/info.json", array(
+          "@id" => urldecode(url("islandora_iiif/{$children_info['PID']}/info.json", array(
             'absolute' => TRUE,
             'language' => (object) array('language' => FALSE),
           ))),
