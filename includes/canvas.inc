@@ -37,7 +37,6 @@ function islandora_iiif_islandora_canvas_solr_backend_callable($object) {
 
   // We should have a default sort here for sequences.
   $qp->executeQuery();
-  // dpm($qp->islandoraSolrResult['response']);
   return array(
     $qp->islandoraSolrResult['response']['numFound'],
     $qp->islandoraSolrResult['response']['objects'],
@@ -51,7 +50,9 @@ function islandora_iiif_canvas_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora_solr_metadata', 'includes/db');
   module_load_include('inc', 'islandora_solr_metadata', 'theme/theme');
 
-  $canvas_info = islandora_iiif_islandora_canvas_solr_backend_callable($object);
+
+  $canvas_info_total = islandora_iiif_islandora_canvas_solr_backend_callable($object);
+  $canvas_info = $canvas_info_total[1];
   $intwidth = isset($canvas_info['solr_doc']['RELS_INT_width_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_width_literal_s'] : 640;
   $intheight = isset($canvas_info['solr_doc']['RELS_INT_height_literal_s']) ? $canvas_info['solr_doc']['RELS_INT_height_literal_s'] : 480;
   $fitswidth = isset($canvas_info['solr_doc']['fits_metadata_image_imageWidth_ms']) ? $canvas_info['solr_doc']['fits_metadata_image_imageWidth_ms'][0] : 640 ; 
